@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SmartCV ATS — Criador de Currículos</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+  :root {
+    --bg: #f0eeea;
+    --bg2: #e8e5df;
+    --card: #ffffff;
+    --ink: #1a1714;
+    --ink2: #5a5550;
+    --accent: #d4500a;
+    --accent2: #f07040;
+    --border: #d5d0c8;
+    --green: #2d7a4f;
+    --amber: #c8770a;
+    --shadow: 0 2px 16px rgba(26,23,20,0.08);
+    --radius: 14px;
+    --font-head: 'Syne', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+  }
+  [data-theme="dark"] {
+    --bg: #141210;
+    --bg2: #1e1c19;
+    --card: #252320;
+    --ink: #f0ede8;
+    --ink2: #a09890;
+    --accent: #f07040;
+    --accent2: #ff9060;
+    --border: #363330;
+    --shadow: 0 2px 16px rgba(0,0,0,0.4);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  /* NAV */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    padding: 0 32px;
+    height: 60px;
+    display: flex; align-items: center; justify-content: space-between;
+    box-shadow: var(--shadow);
+  }
+  .nav-logo {
+    font-family: var(--font-head);
+    font-size: 18px; font-weight: 800;
+    color: var(--accent);
+    letter-spacing: -0.5px;
+  }
+  .nav-logo span { color: var(--ink); }
+  .nav-controls { display: flex; gap: 10px; align-items: center; }
+  .btn-icon {
+    background: var(--bg2); border: 1px solid var(--border);
+    color: var(--ink); border-radius: 8px;
+    padding: 6px 12px; font-size: 13px; cursor: pointer;
+    font-family: var(--font-body); transition: all 0.2s;
+  }
+  .btn-icon:hover { background: var(--border); }
+
+  /* PAGES */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* HOME */
+  .home-hero {
+    min-height: calc(100vh - 60px);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 60px 24px;
+    text-align: center;
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--accent); color: #fff;
+    border-radius: 100px; padding: 4px 14px;
+    font-size: 12px; font-weight: 600;
+    margin-bottom: 24px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .hero-title {
+    font-family: var(--font-head);
+    font-size: clamp(36px, 7vw, 72px);
+    font-weight: 800; line-height: 1.05;
+    color: var(--ink);
+    max-width: 720px;
+    margin-bottom: 20px;
+    letter-spacing: -2px;
+  }
+  .hero-title em { color: var(--accent); font-style: normal; }
+  .hero-sub {
+    font-size: 17px; color: var(--ink2);
+    max-width: 480px; line-height: 1.65;
+    margin-bottom: 40px;
+  }
+  .hero-btns { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+  .btn-primary {
+    background: var(--accent); color: #fff;
+    border: none; border-radius: 10px;
+    padding: 14px 28px; font-size: 15px;
+    font-weight: 600; cursor: pointer;
+    font-family: var(--font-body);
+    transition: all 0.2s; box-shadow: 0 4px 14px rgba(212,80,10,0.3);
+  }
+  .btn-primary:hover { background: var(--accent2); transform: translateY(-2px); }
+  .btn-secondary {
+    background: var(--card); color: var(--ink);
+    border: 1.5px solid var(--border);
+    border-radius: 10px; padding: 14px 28px;
+    font-size: 15px; font-weight: 600; cursor: pointer;
+    font-family: var(--font-body); transition: all 0.2s;
+  }
+  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+  .home-features {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px; max-width: 900px; margin: 0 auto;
+    padding: 60px 24px 40px;
+  }
+  .feature-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 24px;
+    box-shadow: var(--shadow);
+  }
+  .feature-icon { font-size: 28px; margin-bottom: 12px; }
+  .feature-title { font-family: var(--font-head); font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+  .feature-desc { font-size: 13px; color: var(--ink2); line-height: 1.5; }
+
+  /* BUILDER */
+  .builder-wrap {
+    max-width: 680px; margin: 0 auto;
+    padding: 40px 24px 100px;
+  }
+  .step-bar {
+    display: flex; gap: 6px; margin-bottom: 32px;
+  }
+  .step-dot {
+    height: 4px; flex: 1; border-radius: 4px;
+    background: var(--border); transition: background 0.3s;
+  }
+  .step-dot.done { background: var(--accent); }
+  .step-label {
+    font-size: 12px; color: var(--ink2); margin-bottom: 6px;
+    text-transform: uppercase; letter-spacing: 0.8px;
+    font-weight: 600;
+  }
+  .step-title {
+    font-family: var(--font-head);
+    font-size: 26px; font-weight: 800; margin-bottom: 8px;
+    color: var(--ink);
+  }
+  .step-sub { font-size: 14px; color: var(--ink2); margin-bottom: 32px; line-height: 1.5; }
+
+  /* FORM */
+  .field-group { margin-bottom: 18px; }
+  label { display: block; font-size: 13px; font-weight: 600; color: var(--ink2); margin-bottom: 6px; }
+  input, textarea, select {
+    width: 100%; padding: 12px 14px;
+    background: var(--card); color: var(--ink);
+    border: 1.5px solid var(--border); border-radius: 10px;
+    font-family: var(--font-body); font-size: 14px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+  }
+  input:focus, textarea:focus, select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(212,80,10,0.12);
+  }
+  textarea { resize: vertical; min-height: 100px; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+  /* CANDIDATE TYPE */
+  .type-cards { display: grid; gap: 12px; margin-bottom: 24px; }
+  .type-card {
+    background: var(--card); border: 2px solid var(--border);
+    border-radius: var(--radius); padding: 18px 20px;
+    cursor: pointer; transition: all 0.2s;
+    display: flex; align-items: center; gap: 16px;
+  }
+  .type-card:hover { border-color: var(--accent); }
+  .type-card.selected { border-color: var(--accent); background: rgba(212,80,10,0.06); }
+  .type-card-icon { font-size: 28px; flex-shrink: 0; }
+  .type-card-text h3 { font-family: var(--font-head); font-size: 15px; font-weight: 700; margin-bottom: 2px; }
+  .type-card-text p { font-size: 12px; color: var(--ink2); }
+
+  /* SKILLS */
+  .skill-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+  .skill-tag {
+    background: var(--bg2); border: 1.5px solid var(--border);
+    border-radius: 100px; padding: 6px 14px;
+    font-size: 13px; cursor: pointer; transition: all 0.2s;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .skill-tag:hover { border-color: var(--accent); color: var(--accent); }
+  .skill-tag.added { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .skill-tag .remove { font-size: 11px; opacity: 0.7; }
+  .skill-input-row { display: flex; gap: 10px; }
+  .skill-input-row input { flex: 1; }
+
+  /* EXPERIENCE */
+  .exp-card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 16px; margin-bottom: 12px;
+  }
+  .exp-card-head { display: flex; justify-content: space-between; align-items: flex-start; }
+  .exp-card h4 { font-family: var(--font-head); font-size: 14px; font-weight: 700; }
+  .exp-card p { font-size: 12px; color: var(--ink2); margin-top: 2px; }
+  .btn-remove { background: none; border: none; cursor: pointer; color: var(--ink2); font-size: 16px; padding: 2px; }
+
+  /* BOTTOM NAV */
+  .builder-footer {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: var(--card); border-top: 1px solid var(--border);
+    padding: 16px 24px;
+    display: flex; align-items: center; justify-content: space-between;
+    z-index: 50;
+  }
+  .btn-back {
+    background: none; border: 1.5px solid var(--border);
+    color: var(--ink2); border-radius: 10px;
+    padding: 12px 22px; font-size: 14px;
+    font-weight: 600; cursor: pointer;
+    font-family: var(--font-body); transition: all 0.2s;
+  }
+  .btn-back:hover { border-color: var(--ink); color: var(--ink); }
+  .step-counter { font-size: 13px; color: var(--ink2); }
+
+  /* PREVIEW */
+  .preview-wrap { max-width: 860px; margin: 0 auto; padding: 40px 24px 60px; }
+  .preview-toolbar {
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 12px; margin-bottom: 28px;
+  }
+  .preview-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+  .btn-pdf {
+    background: var(--green); color: #fff;
+    border: none; border-radius: 10px;
+    padding: 12px 22px; font-size: 14px;
+    font-weight: 600; cursor: pointer;
+    font-family: var(--font-body); transition: all 0.2s;
+  }
+  .btn-pdf:hover { opacity: 0.88; transform: translateY(-1px); }
+
+  /* ATS SCORE */
+  .ats-box {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 24px;
+    margin-bottom: 28px; box-shadow: var(--shadow);
+  }
+  .ats-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+  .ats-title { font-family: var(--font-head); font-size: 16px; font-weight: 700; }
+  .ats-score-circle {
+    width: 80px; height: 80px; border-radius: 50%;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    font-family: var(--font-head); font-weight: 800;
+    font-size: 22px;
+    border: 4px solid;
+  }
+  .ats-score-circle.high { border-color: var(--green); color: var(--green); }
+  .ats-score-circle.mid { border-color: var(--amber); color: var(--amber); }
+  .ats-score-circle.low { border-color: #c0392b; color: #c0392b; }
+  .ats-score-circle small { font-size: 10px; font-weight: 500; opacity: 0.7; }
+  .ats-bars { display: grid; gap: 12px; }
+  .ats-bar-row { display: grid; grid-template-columns: 130px 1fr 36px; gap: 10px; align-items: center; }
+  .ats-bar-label { font-size: 13px; color: var(--ink2); }
+  .ats-bar-track { height: 7px; background: var(--bg2); border-radius: 100px; overflow: hidden; }
+  .ats-bar-fill { height: 100%; border-radius: 100px; transition: width 0.8s ease; }
+  .ats-bar-val { font-size: 12px; font-weight: 700; text-align: right; }
+  .ats-tips { margin-top: 16px; }
+  .ats-tip {
+    font-size: 13px; color: var(--ink2); padding: 8px 12px;
+    background: var(--bg2); border-radius: 8px; margin-bottom: 6px;
+    display: flex; gap: 8px; align-items: flex-start;
+  }
+  .ats-tip .icon { flex-shrink: 0; }
+
+  /* RESUME DOCUMENT */
+  #resume-doc {
+    background: #fff; color: #1a1714;
+    border-radius: var(--radius);
+    box-shadow: 0 4px 40px rgba(0,0,0,0.14);
+    overflow: hidden;
+    font-family: 'DM Sans', Arial, sans-serif;
+  }
+  .res-header {
+    background: linear-gradient(135deg, #1a1714 0%, #3d3530 100%);
+    color: #f0ede8; padding: 36px 40px;
+  }
+  .res-name { font-family: 'Syne', Arial, sans-serif; font-size: 32px; font-weight: 800; letter-spacing: -1px; }
+  .res-role { font-size: 14px; opacity: 0.7; margin-top: 4px; text-transform: uppercase; letter-spacing: 1px; }
+  .res-contacts {
+    display: flex; flex-wrap: wrap; gap: 16px; margin-top: 16px;
+  }
+  .res-contact { font-size: 13px; opacity: 0.85; display: flex; gap: 5px; align-items: center; }
+  .res-body { padding: 32px 40px; display: grid; grid-template-columns: 1fr 280px; gap: 32px; }
+  .res-main {}
+  .res-side {}
+  .res-section { margin-bottom: 28px; }
+  .res-section-title {
+    font-family: 'Syne', Arial, sans-serif;
+    font-size: 11px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 2px;
+    color: #d4500a; margin-bottom: 14px;
+    padding-bottom: 6px; border-bottom: 2px solid #d4500a;
+  }
+  .res-summary { font-size: 14px; line-height: 1.7; color: #3d3530; }
+  .res-exp { margin-bottom: 16px; }
+  .res-exp-role { font-family: 'Syne', Arial, sans-serif; font-size: 15px; font-weight: 700; }
+  .res-exp-company { font-size: 13px; color: #d4500a; font-weight: 600; }
+  .res-exp-period { font-size: 12px; color: #7a706a; margin: 2px 0 6px; }
+  .res-exp-desc { font-size: 13px; color: #3d3530; line-height: 1.6; }
+  .res-skill-wrap { display: flex; flex-wrap: wrap; gap: 6px; }
+  .res-skill {
+    background: #f5f0eb; color: #3d3530;
+    border-radius: 6px; padding: 5px 10px;
+    font-size: 12px; font-weight: 600;
+  }
+  .res-edu { margin-bottom: 12px; }
+  .res-edu-course { font-weight: 700; font-size: 14px; }
+  .res-edu-school { font-size: 13px; color: #7a706a; }
+  .res-edu-year { font-size: 12px; color: #a09890; }
+
+  /* DASHBOARD */
+  .dash-wrap { max-width: 800px; margin: 0 auto; padding: 40px 24px; }
+  .dash-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; }
+  .dash-title { font-family: var(--font-head); font-size: 28px; font-weight: 800; }
+  .resume-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 24px;
+    box-shadow: var(--shadow); margin-bottom: 16px;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 16px;
+  }
+  .rc-info h3 { font-family: var(--font-head); font-size: 17px; font-weight: 700; margin-bottom: 4px; }
+  .rc-info p { font-size: 13px; color: var(--ink2); }
+  .rc-score {
+    display: flex; flex-direction: column; align-items: center;
+    flex-shrink: 0;
+  }
+  .rc-score-num { font-family: var(--font-head); font-size: 22px; font-weight: 800; }
+  .rc-score-label { font-size: 11px; color: var(--ink2); }
+  .rc-actions { display: flex; gap: 8px; }
+  .btn-sm {
+    padding: 8px 14px; border-radius: 8px;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+    font-family: var(--font-body); transition: all 0.2s;
+  }
+  .btn-sm-primary { background: var(--accent); color: #fff; border: none; }
+  .btn-sm-primary:hover { opacity: 0.88; }
+  .btn-sm-ghost { background: none; border: 1.5px solid var(--border); color: var(--ink); }
+  .btn-sm-ghost:hover { border-color: var(--accent); color: var(--accent); }
+  .empty-state { text-align: center; padding: 80px 24px; }
+  .empty-icon { font-size: 56px; margin-bottom: 16px; opacity: 0.5; }
+  .empty-title { font-family: var(--font-head); font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+  .empty-sub { font-size: 14px; color: var(--ink2); margin-bottom: 24px; }
+
+  /* UTILS */
+  .hidden { display: none !important; }
+  .color-green { color: var(--green); }
+  .color-amber { color: var(--amber); }
+  .color-red { color: #c0392b; }
+
+  @media (max-width: 640px) {
+    .two-col { grid-template-columns: 1fr; }
+    .res-body { grid-template-columns: 1fr; }
+    .resume-card { flex-direction: column; align-items: flex-start; }
+    nav { padding: 0 16px; }
+  }
+</style>
+</head>
+<body data-theme="light">
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Smart<span>CV</span> ATS</div>
+  <div class="nav-controls">
+    <button class="btn-icon" id="btn-dashboard" onclick="showPage('dashboard')" style="display:none">📂 Meus Currículos</button>
+    <button class="btn-icon" id="btn-lang" onclick="toggleLang()">🌐 EN</button>
+    <button class="btn-icon" id="btn-theme" onclick="toggleTheme()">🌙</button>
+  </div>
+</nav>
+
+<!-- ===== HOME ===== -->
+<div id="page-home" class="page active">
+  <div class="home-hero">
+    <div class="hero-badge">🎯 Otimizado para ATS</div>
+    <h1 class="hero-title">Seu currículo merece chegar nas <em>mãos certas</em></h1>
+    <p class="hero-sub">Crie um currículo moderno, aprovado pelos sistemas ATS e que chama atenção dos recrutadores — em minutos.</p>
+    <div class="hero-btns">
+      <button class="btn-primary" onclick="startBuilder()">✏️ Criar currículo agora</button>
+      <button class="btn-secondary" onclick="showPage('dashboard')">📂 Meus currículos</button>
+    </div>
+  </div>
+  <div class="home-features">
+    <div class="feature-card">
+      <div class="feature-icon">🤖</div>
+      <div class="feature-title" data-i18n="feat1-t">Score ATS automático</div>
+      <div class="feature-desc" data-i18n="feat1-d">Saiba em tempo real se o seu currículo passaria pelo filtro automático das empresas.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📄</div>
+      <div class="feature-title" data-i18n="feat2-t">Export em PDF</div>
+      <div class="feature-desc" data-i18n="feat2-d">Baixe o currículo em PDF pronto para enviar por e-mail ou upload em plataformas.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🎓</div>
+      <div class="feature-title" data-i18n="feat3-t">Perfeito para o 1° emprego</div>
+      <div class="feature-desc" data-i18n="feat3-d">Nunca trabalhou? O app adapta o currículo valorizando formação, cursos e habilidades.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🌓</div>
+      <div class="feature-title" data-i18n="feat4-t">Dark & Light mode</div>
+      <div class="feature-desc" data-i18n="feat4-d">Interface adaptável para você trabalhar confortavelmente a qualquer hora.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== BUILDER ===== -->
+<div id="page-builder" class="page">
+  <div class="builder-wrap">
+    <!-- Step progress -->
+    <div class="step-bar" id="step-bar">
+      <div class="step-dot" id="sdot-0"></div>
+      <div class="step-dot" id="sdot-1"></div>
+      <div class="step-dot" id="sdot-2"></div>
+      <div class="step-dot" id="sdot-3"></div>
+      <div class="step-dot" id="sdot-4"></div>
+      <div class="step-dot" id="sdot-5"></div>
+    </div>
+
+    <!-- STEP 0: Candidate Type -->
+    <div id="step-0" class="builder-step">
+      <div class="step-label" data-i18n="s0-label">Etapa 1 de 6</div>
+      <h2 class="step-title" data-i18n="s0-title">Qual é a sua situação?</h2>
+      <p class="step-sub" data-i18n="s0-sub">Isso ajuda a personalizar o currículo para o seu momento profissional.</p>
+      <div class="type-cards">
+        <div class="type-card" onclick="selectType('first-job')" data-type="first-job">
+          <div class="type-card-icon">🌱</div>
+          <div class="type-card-text">
+            <h3 data-i18n="type-1">Primeiro emprego</h3>
+            <p data-i18n="type-1d">Nunca tive experiência formal de trabalho</p>
+          </div>
+        </div>
+        <div class="type-card" onclick="selectType('apprentice')" data-type="apprentice">
+          <div class="type-card-icon">📚</div>
+          <div class="type-card-text">
+            <h3 data-i18n="type-2">Jovem Aprendiz / Estágio</h3>
+            <p data-i18n="type-2d">Tenho ou busco oportunidade de aprendiz ou estágio</p>
+          </div>
+        </div>
+        <div class="type-card" onclick="selectType('professional')" data-type="professional">
+          <div class="type-card-icon">💼</div>
+          <div class="type-card-text">
+            <h3 data-i18n="type-3">Profissional com experiência</h3>
+            <p data-i18n="type-3d">Já trabalhei e tenho experiência para mostrar</p>
+          </div>
+        </div>
+        <div class="type-card" onclick="selectType('senior')" data-type="senior">
+          <div class="type-card-icon">🏆</div>
+          <div class="type-card-text">
+            <h3 data-i18n="type-4">Sênior / Liderança</h3>
+            <p data-i18n="type-4d">5+ anos de experiência ou cargo de gestão</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 1: Personal Info -->
+    <div id="step-1" class="builder-step hidden">
+      <div class="step-label" data-i18n="s1-label">Etapa 2 de 6</div>
+      <h2 class="step-title" data-i18n="s1-title">Informações pessoais</h2>
+      <p class="step-sub" data-i18n="s1-sub">Dados de contato que o recrutador verá primeiro.</p>
+      <div class="field-group">
+        <label data-i18n="lbl-name">Nome completo *</label>
+        <input type="text" id="f-name" placeholder="Ex: Leonardo Nascimento" />
+      </div>
+      <div class="two-col">
+        <div class="field-group">
+          <label data-i18n="lbl-email">E-mail *</label>
+          <input type="email" id="f-email" placeholder="seuemail@email.com" />
+        </div>
+        <div class="field-group">
+          <label data-i18n="lbl-phone">Telefone</label>
+          <input type="text" id="f-phone" placeholder="(21) 99999-9999" />
+        </div>
+      </div>
+      <div class="two-col">
+        <div class="field-group">
+          <label data-i18n="lbl-city">Cidade / Estado</label>
+          <input type="text" id="f-city" placeholder="Rio de Janeiro, RJ" />
+        </div>
+        <div class="field-group">
+          <label data-i18n="lbl-role">Cargo desejado</label>
+          <input type="text" id="f-role" placeholder="Ex: Assistente Administrativo" />
+        </div>
+      </div>
+      <div class="field-group">
+        <label data-i18n="lbl-linkedin">LinkedIn (opcional)</label>
+        <input type="text" id="f-linkedin" placeholder="linkedin.com/in/seu-perfil" />
+      </div>
+    </div>
+
+    <!-- STEP 2: Summary -->
+    <div id="step-2" class="builder-step hidden">
+      <div class="step-label" data-i18n="s2-label">Etapa 3 de 6</div>
+      <h2 class="step-title" data-i18n="s2-title">Resumo profissional</h2>
+      <p class="step-sub" data-i18n="s2-sub">2–3 frases sobre quem você é e o que busca. Seja direto e use palavras-chave da sua área.</p>
+      <div class="field-group">
+        <label data-i18n="lbl-summary">Resumo *</label>
+        <textarea id="f-summary" rows="5" placeholder="Ex: Jovem em busca da primeira oportunidade como Jovem Aprendiz, com interesse em aprender e desenvolver habilidades na área administrativa. Organizado, responsável e com rápida capacidade de aprendizado."></textarea>
+      </div>
+      <div style="margin-top:8px;">
+        <p style="font-size:12px;color:var(--ink2);" data-i18n="s2-tip">💡 Dica ATS: inclua o nome do cargo desejado no resumo, escreva em 3ª pessoa e mencione sua principal habilidade.</p>
+      </div>
+      <div id="summary-templates" style="margin-top:20px;">
+        <p style="font-size:13px;font-weight:600;margin-bottom:10px;" data-i18n="s2-templates">Templates para usar:</p>
+        <div id="tpl-cards" style="display:grid;gap:8px;"></div>
+      </div>
+    </div>
+
+    <!-- STEP 3: Experience / Education -->
+    <div id="step-3" class="builder-step hidden">
+      <div class="step-label" id="s3-label">Etapa 4 de 6</div>
+      <h2 class="step-title" id="s3-title">Experiência Profissional</h2>
+      <p class="step-sub" data-i18n="s3-sub">Adicione suas experiências. Foque em resultados e números quando possível.</p>
+
+      <div id="exp-list" style="margin-bottom:20px;"></div>
+
+      <div id="exp-form" style="background:var(--bg2);border-radius:12px;padding:20px;margin-bottom:16px;">
+        <p style="font-size:14px;font-weight:600;margin-bottom:14px;" id="exp-form-title" data-i18n="exp-add">+ Adicionar entrada</p>
+        <div class="two-col">
+          <div class="field-group">
+            <label id="lbl-exp1">Empresa / Instituição</label>
+            <input type="text" id="ef-company" placeholder="Nome da empresa" />
+          </div>
+          <div class="field-group">
+            <label id="lbl-exp2">Cargo / Função</label>
+            <input type="text" id="ef-role" placeholder="Ex: Atendente" />
+          </div>
+        </div>
+        <div class="two-col">
+          <div class="field-group">
+            <label data-i18n="lbl-start">Início</label>
+            <input type="month" id="ef-start" />
+          </div>
+          <div class="field-group">
+            <label data-i18n="lbl-end">Fim (deixe vazio se atual)</label>
+            <input type="month" id="ef-end" />
+          </div>
+        </div>
+        <div class="field-group">
+          <label data-i18n="lbl-desc">Descrição / Conquistas</label>
+          <textarea id="ef-desc" rows="3" placeholder="O que você fez? Use verbos de ação: liderou, aumentou, organizou, desenvolveu..."></textarea>
+        </div>
+        <button class="btn-primary" onclick="addEntry()" data-i18n="btn-add-exp">Adicionar</button>
+      </div>
+    </div>
+
+    <!-- STEP 4: Skills -->
+    <div id="step-4" class="builder-step hidden">
+      <div class="step-label" data-i18n="s4-label">Etapa 5 de 6</div>
+      <h2 class="step-title" data-i18n="s4-title">Habilidades</h2>
+      <p class="step-sub" data-i18n="s4-sub">Selecione ou adicione as habilidades que você tem. Elas ajudam muito no ATS.</p>
+
+      <p style="font-size:13px;font-weight:600;margin-bottom:10px;" data-i18n="skill-suggest">Sugestões baseadas no seu perfil:</p>
+      <div id="skill-suggestions" class="skill-tags"></div>
+
+      <p style="font-size:13px;font-weight:600;margin:20px 0 10px;" data-i18n="skill-added">Suas habilidades:</p>
+      <div id="skill-selected" class="skill-tags" style="min-height:36px;"></div>
+
+      <div class="skill-input-row" style="margin-top:16px;">
+        <input type="text" id="skill-input" placeholder="Digitar habilidade personalizada..." onkeydown="if(event.key==='Enter'){addCustomSkill();}" />
+        <button class="btn-secondary" onclick="addCustomSkill()" data-i18n="btn-add-skill">Adicionar</button>
+      </div>
+    </div>
+
+    <!-- STEP 5: Preview trigger -->
+    <div id="step-5" class="builder-step hidden">
+      <div style="text-align:center;padding:60px 0;">
+        <div style="font-size:64px;margin-bottom:20px;">🎉</div>
+        <h2 class="step-title" style="text-align:center;" data-i18n="s5-title">Currículo pronto!</h2>
+        <p class="step-sub" style="text-align:center;max-width:360px;margin:0 auto 30px;" data-i18n="s5-sub">Revise, salve e baixe o seu currículo otimizado para ATS.</p>
+        <button class="btn-primary" onclick="showPreview()" data-i18n="btn-preview">Ver Preview →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer navigation -->
+  <div class="builder-footer">
+    <button class="btn-back" id="btn-back" onclick="prevStep()">← <span data-i18n="btn-back">Voltar</span></button>
+    <span class="step-counter" id="step-counter">1 / 6</span>
+    <button class="btn-primary" id="btn-next" onclick="nextStep()"><span data-i18n="btn-next">Continuar</span> →</button>
+  </div>
+</div>
+
+<!-- ===== PREVIEW ===== -->
+<div id="page-preview" class="page">
+  <div class="preview-wrap">
+    <div class="preview-toolbar">
+      <div>
+        <h2 style="font-family:var(--font-head);font-size:22px;font-weight:800;" data-i18n="prev-title">Preview do Currículo</h2>
+        <p style="font-size:13px;color:var(--ink2);margin-top:2px;" data-i18n="prev-sub">Assim que o recrutador irá ver o seu currículo</p>
+      </div>
+      <div class="preview-actions">
+        <button class="btn-secondary btn-sm" onclick="showPage('builder'); currentStep=4; renderStep();" data-i18n="btn-edit">✏️ Editar</button>
+        <button class="btn-pdf" onclick="saveResume()" data-i18n="btn-save">💾 Salvar</button>
+        <button class="btn-primary" onclick="downloadPDF()" data-i18n="btn-pdf">⬇️ Baixar PDF</button>
+      </div>
+    </div>
+
+    <!-- ATS Score -->
+    <div class="ats-box" id="ats-box">
+      <div class="ats-header">
+        <div class="ats-title">📊 <span data-i18n="ats-title">Análise ATS</span></div>
+        <div class="ats-score-circle" id="ats-circle"><span id="ats-num">0</span><small>ATS</small></div>
+      </div>
+      <div class="ats-bars">
+        <div class="ats-bar-row">
+          <span class="ats-bar-label" data-i18n="ats-kw">Palavras-chave</span>
+          <div class="ats-bar-track"><div class="ats-bar-fill" id="bar-kw" style="width:0%;background:var(--accent)"></div></div>
+          <span class="ats-bar-val" id="val-kw">0%</span>
+        </div>
+        <div class="ats-bar-row">
+          <span class="ats-bar-label" data-i18n="ats-struct">Estrutura</span>
+          <div class="ats-bar-track"><div class="ats-bar-fill" id="bar-struct" style="width:0%;background:var(--green)"></div></div>
+          <span class="ats-bar-val" id="val-struct">0%</span>
+        </div>
+        <div class="ats-bar-row">
+          <span class="ats-bar-label" data-i18n="ats-clarity">Clareza</span>
+          <div class="ats-bar-track"><div class="ats-bar-fill" id="bar-clarity" style="width:0%;background:var(--amber)"></div></div>
+          <span class="ats-bar-val" id="val-clarity">0%</span>
+        </div>
+        <div class="ats-bar-row">
+          <span class="ats-bar-label" data-i18n="ats-exp">Experiência</span>
+          <div class="ats-bar-track"><div class="ats-bar-fill" id="bar-exp" style="width:0%;background:#8b5cf6"></div></div>
+          <span class="ats-bar-val" id="val-exp">0%</span>
+        </div>
+      </div>
+      <div class="ats-tips" id="ats-tips"></div>
+    </div>
+
+    <!-- Resume Document -->
+    <div id="resume-doc">
+      <div class="res-header">
+        <div class="res-name" id="doc-name">Seu Nome</div>
+        <div class="res-role" id="doc-role"></div>
+        <div class="res-contacts" id="doc-contacts"></div>
+      </div>
+      <div class="res-body">
+        <div class="res-main">
+          <div class="res-section" id="doc-summary-sec" style="display:none">
+            <div class="res-section-title" data-i18n="res-summary">RESUMO PROFISSIONAL</div>
+            <div class="res-summary" id="doc-summary"></div>
+          </div>
+          <div class="res-section" id="doc-exp-sec" style="display:none">
+            <div class="res-section-title" id="doc-exp-title">EXPERIÊNCIA PROFISSIONAL</div>
+            <div id="doc-exp-list"></div>
+          </div>
+        </div>
+        <div class="res-side">
+          <div class="res-section" id="doc-skills-sec" style="display:none">
+            <div class="res-section-title" data-i18n="res-skills">HABILIDADES</div>
+            <div class="res-skill-wrap" id="doc-skills-list"></div>
+          </div>
+          <div class="res-section" id="doc-type-sec">
+            <div class="res-section-title" data-i18n="res-profile">PERFIL</div>
+            <div id="doc-type-text" style="font-size:13px;color:#5a5550;line-height:1.6;"></div>
+          </div>
+          <div class="res-section" id="doc-contact-side">
+            <div class="res-section-title" data-i18n="res-contact">CONTATO</div>
+            <div id="doc-contact-detail" style="font-size:13px;color:#5a5550;line-height:1.8;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== DASHBOARD ===== -->
+<div id="page-dashboard" class="page">
+  <div class="dash-wrap">
+    <div class="dash-head">
+      <h2 class="dash-title" data-i18n="dash-title">Meus Currículos</h2>
+      <button class="btn-primary" onclick="startBuilder()" data-i18n="dash-new">+ Novo currículo</button>
+    </div>
+    <div id="dash-list"></div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// STATE
+// ============================================================
+let currentStep = 0;
+let resumeData = {
+  candidateType: null,
+  personalInfo: {},
+  summary: '',
+  entries: [],  // experience or education
+  skills: []
+};
+let lang = 'pt';
+let theme = 'light';
+
+// ============================================================
+// I18N
+// ============================================================
+const translations = {
+  pt: {
+    's0-label':'Etapa 1 de 6','s0-title':'Qual é a sua situação?','s0-sub':'Isso ajuda a personalizar o currículo para o seu momento profissional.',
+    'type-1':'Primeiro emprego','type-1d':'Nunca tive experiência formal de trabalho',
+    'type-2':'Jovem Aprendiz / Estágio','type-2d':'Tenho ou busco oportunidade de aprendiz ou estágio',
+    'type-3':'Profissional com experiência','type-3d':'Já trabalhei e tenho experiência para mostrar',
+    'type-4':'Sênior / Liderança','type-4d':'5+ anos de experiência ou cargo de gestão',
+    's1-label':'Etapa 2 de 6','s1-title':'Informações pessoais','s1-sub':'Dados de contato que o recrutador verá primeiro.',
+    'lbl-name':'Nome completo *','lbl-email':'E-mail *','lbl-phone':'Telefone','lbl-city':'Cidade / Estado',
+    'lbl-role':'Cargo desejado','lbl-linkedin':'LinkedIn (opcional)',
+    's2-label':'Etapa 3 de 6','s2-title':'Resumo profissional','s2-sub':'2–3 frases sobre quem você é e o que busca.',
+    's2-tip':'💡 Dica ATS: inclua o nome do cargo desejado, escreva em 3ª pessoa e mencione sua principal habilidade.',
+    's2-templates':'Templates para usar:',
+    's3-sub':'Adicione suas experiências. Foque em resultados e números quando possível.',
+    's4-label':'Etapa 5 de 6','s4-title':'Habilidades','s4-sub':'Selecione ou adicione as habilidades que você tem.',
+    'skill-suggest':'Sugestões baseadas no seu perfil:','skill-added':'Suas habilidades:','btn-add-skill':'Adicionar',
+    's5-title':'Currículo pronto!','s5-sub':'Revise, salve e baixe o seu currículo otimizado para ATS.',
+    'btn-preview':'Ver Preview →','btn-back':'Voltar','btn-next':'Continuar',
+    'prev-title':'Preview do Currículo','prev-sub':'Assim que o recrutador irá ver o seu currículo',
+    'btn-edit':'✏️ Editar','btn-save':'💾 Salvar','btn-pdf':'⬇️ Baixar PDF',
+    'ats-title':'Análise ATS','ats-kw':'Palavras-chave','ats-struct':'Estrutura',
+    'ats-clarity':'Clareza','ats-exp':'Experiência',
+    'res-summary':'RESUMO PROFISSIONAL','res-skills':'HABILIDADES','res-profile':'PERFIL','res-contact':'CONTATO',
+    'dash-title':'Meus Currículos','dash-new':'+ Novo currículo',
+    'feat1-t':'Score ATS automático','feat1-d':'Saiba em tempo real se o seu currículo passaria pelo filtro automático.',
+    'feat2-t':'Export em PDF','feat2-d':'Baixe o currículo em PDF pronto para enviar.',
+    'feat3-t':'Perfeito para o 1° emprego','feat3-d':'Nunca trabalhou? Valorizamos formação e habilidades.',
+    'feat4-t':'Dark & Light mode','feat4-d':'Interface adaptável para qualquer hora.',
+    'lbl-start':'Início','lbl-end':'Fim (deixe vazio se atual)','lbl-desc':'Descrição / Conquistas',
+    'btn-add-exp':'Adicionar','exp-add':'+ Adicionar entrada',
+  },
+  en: {
+    's0-label':'Step 1 of 6','s0-title':'What is your situation?','s0-sub':'This helps personalize the resume for your professional moment.',
+    'type-1':'First job','type-1d':'I have never had formal work experience',
+    'type-2':'Apprentice / Intern','type-2d':'Looking for apprentice or internship opportunity',
+    'type-3':'Experienced professional','type-3d':'I have worked before and have experience to show',
+    'type-4':'Senior / Leadership','type-4d':'5+ years of experience or management role',
+    's1-label':'Step 2 of 6','s1-title':'Personal information','s1-sub':'Contact details the recruiter will see first.',
+    'lbl-name':'Full name *','lbl-email':'Email *','lbl-phone':'Phone','lbl-city':'City / State',
+    'lbl-role':'Target role','lbl-linkedin':'LinkedIn (optional)',
+    's2-label':'Step 3 of 6','s2-title':'Professional summary','s2-sub':'2–3 sentences about who you are and what you seek.',
+    's2-tip':'💡 ATS tip: include the target job title, write in third person, and mention your top skill.',
+    's2-templates':'Templates to use:',
+    's3-sub':'Add your experiences. Focus on results and numbers when possible.',
+    's4-label':'Step 5 of 6','s4-title':'Skills','s4-sub':'Select or add skills that you have.',
+    'skill-suggest':'Suggestions for your profile:','skill-added':'Your skills:','btn-add-skill':'Add',
+    's5-title':'Resume ready!','s5-sub':'Review, save and download your ATS-optimized resume.',
+    'btn-preview':'See Preview →','btn-back':'Back','btn-next':'Continue',
+    'prev-title':'Resume Preview','prev-sub':'How the recruiter will see your resume',
+    'btn-edit':'✏️ Edit','btn-save':'💾 Save','btn-pdf':'⬇️ Download PDF',
+    'ats-title':'ATS Analysis','ats-kw':'Keywords','ats-struct':'Structure',
+    'ats-clarity':'Clarity','ats-exp':'Experience',
+    'res-summary':'PROFESSIONAL SUMMARY','res-skills':'SKILLS','res-profile':'PROFILE','res-contact':'CONTACT',
+    'dash-title':'My Resumes','dash-new':'+ New resume',
+    'feat1-t':'Automatic ATS Score','feat1-d':'Know in real time if your resume passes the automatic filter.',
+    'feat2-t':'PDF Export','feat2-d':'Download the resume as PDF ready to send.',
+    'feat3-t':'Perfect for 1st job','feat3-d':'Never worked? We highlight education and skills.',
+    'feat4-t':'Dark & Light mode','feat4-d':'Adaptable interface for any time of day.',
+    'lbl-start':'Start','lbl-end':'End (leave empty if current)','lbl-desc':'Description / Achievements',
+    'btn-add-exp':'Add','exp-add':'+ Add entry',
+  }
+};
+
+function applyLang() {
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (translations[lang][key]) el.textContent = translations[lang][key];
+  });
+  document.getElementById('btn-lang').textContent = lang === 'pt' ? '🌐 EN' : '🌐 PT';
+  renderStep();
+}
+function toggleLang() { lang = lang === 'pt' ? 'en' : 'pt'; applyLang(); }
+
+// ============================================================
+// THEME
+// ============================================================
+function toggleTheme() {
+  theme = theme === 'light' ? 'dark' : 'light';
+  document.body.setAttribute('data-theme', theme);
+  document.getElementById('btn-theme').textContent = theme === 'dark' ? '☀️' : '🌙';
+}
+
+// detect system theme
+if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+  theme = 'dark';
+  document.body.setAttribute('data-theme', 'dark');
+  document.getElementById('btn-theme').textContent = '☀️';
+}
+
+// ============================================================
+// PAGES
+// ============================================================
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  document.getElementById('btn-dashboard').style.display = (id !== 'dashboard') ? 'block' : 'none';
+  if (id === 'dashboard') renderDashboard();
+}
+
+function startBuilder() {
+  resumeData = { candidateType: null, personalInfo: {}, summary: '', entries: [], skills: [] };
+  currentStep = 0;
+  showPage('builder');
+  renderStep();
+}
+
+// ============================================================
+// BUILDER STEPS
+// ============================================================
+const skillSuggestions = {
+  'first-job':  ['Comunicação', 'Trabalho em equipe', 'Organização', 'Responsabilidade', 'Proatividade', 'Pontualidade', 'Aprendizado rápido', 'Microsoft Word', 'Microsoft Excel'],
+  'apprentice': ['Comunicação', 'Trabalho em equipe', 'Organização', 'Excel', 'Word', 'Internet', 'Digitação', 'Atendimento ao cliente', 'Proatividade'],
+  'professional':['Gestão de projetos', 'Excel avançado', 'Power BI', 'CRM', 'Negociação', 'Liderança', 'Análise de dados', 'Comunicação', 'Inglês'],
+  'senior': ['Liderança', 'Gestão de equipes', 'Planejamento estratégico', 'OKR', 'Power BI', 'Excel avançado', 'Tomada de decisão', 'Gestão de crise', 'Inglês fluente'],
+};
+
+const summaryTemplates = {
+  'first-job': [
+    'Jovem dedicado em busca da primeira oportunidade profissional como [CARGO]. Organizado, responsável e com grande capacidade de aprendizado. Estudante de [CURSO] com interesse em crescer na área.',
+    'Candidato entusiasmado e proativo, buscando o primeiro emprego como [CARGO]. Pontual, comunicativo e comprometido com o crescimento profissional.',
+  ],
+  'apprentice': [
+    'Jovem Aprendiz motivado e comprometido, buscando oportunidade na área de [ÁREA]. Boa capacidade de trabalho em equipe, organização e aprendizado rápido.',
+    'Estagiário dedicado com interesse em [ÁREA]. Perfil comunicativo, proativo e com facilidade para aprender novas ferramentas e processos.',
+  ],
+  'professional': [
+    'Profissional com [X] anos de experiência em [ÁREA]. Comprovado histórico de resultados, com habilidade em [HABILIDADE PRINCIPAL]. Buscando novos desafios para contribuir com crescimento organizacional.',
+    'Especialista em [ÁREA] com sólida experiência em [HABILIDADE]. Orientado a resultados e com forte capacidade analítica.',
+  ],
+  'senior': [
+    'Executivo com [X]+ anos de experiência em gestão de [ÁREA]. Liderança de equipes multidisciplinares, com foco em resultados estratégicos e transformação organizacional.',
+    'Profissional sênior em [ÁREA] com ampla experiência em liderança, planejamento e execução de projetos de alta complexidade.',
+  ],
+};
+
+function renderStep() {
+  document.querySelectorAll('.builder-step').forEach(s => s.classList.add('hidden'));
+  document.getElementById('step-' + currentStep)?.classList.remove('hidden');
+
+  // progress dots
+  for (let i = 0; i < 6; i++) {
+    const dot = document.getElementById('sdot-' + i);
+    dot.classList.toggle('done', i <= currentStep);
+  }
+
+  document.getElementById('step-counter').textContent = (currentStep + 1) + ' / 6';
+  document.getElementById('btn-back').style.visibility = currentStep === 0 ? 'hidden' : 'visible';
+  document.getElementById('btn-next').style.display = currentStep === 5 ? 'none' : 'block';
+
+  // Step-specific render
+  if (currentStep === 2) renderSummaryTemplates();
+  if (currentStep === 3) renderExpStep();
+  if (currentStep === 4) renderSkillsStep();
+}
+
+function nextStep() {
+  if (!validateStep()) return;
+  collectStep();
+  if (currentStep < 5) { currentStep++; renderStep(); window.scrollTo(0,0); }
+}
+
+function prevStep() {
+  if (currentStep > 0) { currentStep--; renderStep(); window.scrollTo(0,0); }
+}
+
+function validateStep() {
+  if (currentStep === 0 && !resumeData.candidateType) {
+    alert(lang === 'pt' ? 'Selecione um tipo de candidato.' : 'Please select a candidate type.');
+    return false;
+  }
+  if (currentStep === 1) {
+    const name = document.getElementById('f-name').value.trim();
+    const email = document.getElementById('f-email').value.trim();
+    if (!name || !email) {
+      alert(lang === 'pt' ? 'Nome e e-mail são obrigatórios.' : 'Name and email are required.');
+      return false;
+    }
+  }
+  return true;
+}
+
+function collectStep() {
+  if (currentStep === 1) {
+    resumeData.personalInfo = {
+      name: document.getElementById('f-name').value.trim(),
+      email: document.getElementById('f-email').value.trim(),
+      phone: document.getElementById('f-phone').value.trim(),
+      city: document.getElementById('f-city').value.trim(),
+      role: document.getElementById('f-role').value.trim(),
+      linkedin: document.getElementById('f-linkedin').value.trim(),
+    };
+  }
+  if (currentStep === 2) {
+    resumeData.summary = document.getElementById('f-summary').value.trim();
+  }
+}
+
+// Candidate type
+function selectType(type) {
+  resumeData.candidateType = type;
+  document.querySelectorAll('.type-card').forEach(c => {
+    c.classList.toggle('selected', c.dataset.type === type);
+  });
+}
+
+// Summary templates
+function renderSummaryTemplates() {
+  const tpl = summaryTemplates[resumeData.candidateType] || summaryTemplates['professional'];
+  const cont = document.getElementById('tpl-cards');
+  cont.innerHTML = tpl.map((t, i) => `
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;"
+      onclick="useTpl(${i})" title="${lang==='pt'?'Clique para usar':'Click to use'}">
+      <p style="font-size:13px;color:var(--ink2);line-height:1.5;">${t}</p>
+      <p style="font-size:11px;color:var(--accent);margin-top:6px;font-weight:600;">${lang==='pt'?'↑ Usar este template':'↑ Use this template'}</p>
+    </div>
+  `).join('');
+}
+function useTpl(i) {
+  const tpl = summaryTemplates[resumeData.candidateType] || summaryTemplates['professional'];
+  document.getElementById('f-summary').value = tpl[i];
+}
+
+// Experience step
+function renderExpStep() {
+  const isFirstJob = resumeData.candidateType === 'first-job' || resumeData.candidateType === 'apprentice';
+  document.getElementById('s3-title').textContent = isFirstJob
+    ? (lang === 'pt' ? 'Formação & Cursos' : 'Education & Courses')
+    : (lang === 'pt' ? 'Experiência Profissional' : 'Work Experience');
+  document.getElementById('s3-label').textContent = lang === 'pt' ? 'Etapa 4 de 6' : 'Step 4 of 6';
+  document.getElementById('lbl-exp1').textContent = isFirstJob
+    ? (lang === 'pt' ? 'Escola / Instituição' : 'School / Institution')
+    : (lang === 'pt' ? 'Empresa' : 'Company');
+  document.getElementById('lbl-exp2').textContent = isFirstJob
+    ? (lang === 'pt' ? 'Curso / Ano' : 'Course / Year')
+    : (lang === 'pt' ? 'Cargo' : 'Role');
+
+  renderEntryList();
+}
+
+function renderEntryList() {
+  const list = document.getElementById('exp-list');
+  list.innerHTML = resumeData.entries.map((e, i) => `
+    <div class="exp-card">
+      <div class="exp-card-head">
+        <div>
+          <h4>${e.role || e.company}</h4>
+          <p>${e.company} · ${formatPeriod(e.start, e.end)}</p>
+        </div>
+        <button class="btn-remove" onclick="removeEntry(${i})">🗑</button>
+      </div>
+      ${e.desc ? `<p style="font-size:12px;color:var(--ink2);margin-top:8px;line-height:1.5;">${e.desc}</p>` : ''}
+    </div>
+  `).join('');
+}
+
+function formatPeriod(start, end) {
+  if (!start) return '';
+  const fmt = d => { if (!d) return ''; const [y,m] = d.split('-'); const months = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez']; return months[parseInt(m)-1] + '/' + y; };
+  return fmt(start) + (end ? ' – ' + fmt(end) : ` – ${lang==='pt'?'Atual':'Present'}`);
+}
+
+function addEntry() {
+  const entry = {
+    company: document.getElementById('ef-company').value.trim(),
+    role: document.getElementById('ef-role').value.trim(),
+    start: document.getElementById('ef-start').value,
+    end: document.getElementById('ef-end').value,
+    desc: document.getElementById('ef-desc').value.trim(),
+  };
+  if (!entry.company && !entry.role) {
+    alert(lang === 'pt' ? 'Preencha ao menos empresa/instituição.' : 'Fill at least company/institution.');
+    return;
+  }
+  resumeData.entries.push(entry);
+  document.getElementById('ef-company').value = '';
+  document.getElementById('ef-role').value = '';
+  document.getElementById('ef-start').value = '';
+  document.getElementById('ef-end').value = '';
+  document.getElementById('ef-desc').value = '';
+  renderEntryList();
+}
+
+function removeEntry(i) {
+  resumeData.entries.splice(i, 1);
+  renderEntryList();
+}
+
+// Skills step
+function renderSkillsStep() {
+  const suggestions = skillSuggestions[resumeData.candidateType] || skillSuggestions['professional'];
+  const suggEl = document.getElementById('skill-suggestions');
+  suggEl.innerHTML = suggestions.map(s => `
+    <div class="skill-tag ${resumeData.skills.includes(s) ? 'added' : ''}" onclick="toggleSkill('${s}')">
+      ${s} ${resumeData.skills.includes(s) ? '<span class="remove">✕</span>' : '+'}
+    </div>
+  `).join('');
+
+  const selEl = document.getElementById('skill-selected');
+  selEl.innerHTML = resumeData.skills.map(s => `
+    <div class="skill-tag added" onclick="removeSkill('${s}')">
+      ${s} <span class="remove">✕</span>
+    </div>
+  `).join('');
+}
+
+function toggleSkill(s) {
+  if (resumeData.skills.includes(s)) {
+    resumeData.skills = resumeData.skills.filter(x => x !== s);
+  } else {
+    resumeData.skills.push(s);
+  }
+  renderSkillsStep();
+}
+
+function removeSkill(s) {
+  resumeData.skills = resumeData.skills.filter(x => x !== s);
+  renderSkillsStep();
+}
+
+function addCustomSkill() {
+  const val = document.getElementById('skill-input').value.trim();
+  if (val && !resumeData.skills.includes(val)) {
+    resumeData.skills.push(val);
+    document.getElementById('skill-input').value = '';
+    renderSkillsStep();
+  }
+}
+
+// ============================================================
+// PREVIEW
+// ============================================================
+function showPreview() {
+  collectStep();
+  buildResumeDoc();
+  computeATS();
+  showPage('preview');
+  window.scrollTo(0,0);
+}
+
+function buildResumeDoc() {
+  const d = resumeData;
+  const p = d.personalInfo;
+
+  document.getElementById('doc-name').textContent = p.name || (lang==='pt'?'Seu Nome':'Your Name');
+  document.getElementById('doc-role').textContent = p.role || '';
+
+  // contacts bar
+  const contacts = [];
+  if (p.email) contacts.push('✉ ' + p.email);
+  if (p.phone) contacts.push('📞 ' + p.phone);
+  if (p.city) contacts.push('📍 ' + p.city);
+  if (p.linkedin) contacts.push('🔗 ' + p.linkedin);
+  document.getElementById('doc-contacts').innerHTML = contacts.map(c => `<span class="res-contact">${c}</span>`).join('');
+
+  // summary
+  if (d.summary) {
+    document.getElementById('doc-summary').textContent = d.summary;
+    document.getElementById('doc-summary-sec').style.display = 'block';
+  }
+
+  // experience
+  if (d.entries.length > 0) {
+    const isFirstJob = d.candidateType === 'first-job' || d.candidateType === 'apprentice';
+    document.getElementById('doc-exp-title').textContent = isFirstJob
+      ? (lang==='pt'?'FORMAÇÃO & CURSOS':'EDUCATION & COURSES')
+      : (lang==='pt'?'EXPERIÊNCIA PROFISSIONAL':'WORK EXPERIENCE');
+    document.getElementById('doc-exp-list').innerHTML = d.entries.map(e => `
+      <div class="res-exp">
+        <div class="res-exp-role">${e.role || ''}</div>
+        <div class="res-exp-company">${e.company || ''}</div>
+        <div class="res-exp-period">${formatPeriod(e.start, e.end)}</div>
+        ${e.desc ? `<div class="res-exp-desc">${e.desc}</div>` : ''}
+      </div>
+    `).join('');
+    document.getElementById('doc-exp-sec').style.display = 'block';
+  }
+
+  // skills
+  if (d.skills.length > 0) {
+    document.getElementById('doc-skills-list').innerHTML = d.skills.map(s => `<span class="res-skill">${s}</span>`).join('');
+    document.getElementById('doc-skills-sec').style.display = 'block';
+  }
+
+  // profile type
+  const typeLabels = {
+    'first-job': lang==='pt'?'Primeiro Emprego':'First Job',
+    'apprentice': lang==='pt'?'Jovem Aprendiz':'Apprentice',
+    'professional': lang==='pt'?'Profissional Experiente':'Experienced Professional',
+    'senior': lang==='pt'?'Sênior / Liderança':'Senior / Leadership',
+  };
+  document.getElementById('doc-type-text').textContent = typeLabels[d.candidateType] || '';
+
+  // side contact
+  const sideContact = [];
+  if (p.email) sideContact.push(p.email);
+  if (p.phone) sideContact.push(p.phone);
+  if (p.city) sideContact.push(p.city);
+  document.getElementById('doc-contact-detail').innerHTML = sideContact.join('<br>');
+}
+
+// ============================================================
+// ATS SCORE
+// ============================================================
+function computeATS() {
+  const d = resumeData;
+  let kw = 0, struct = 0, clarity = 0, exp = 0;
+
+  // Keywords
+  const summaryWords = (d.summary || '').toLowerCase();
+  const skillCount = d.skills.length;
+  if (skillCount >= 5) kw += 40;
+  else if (skillCount >= 2) kw += 20;
+  if (summaryWords.includes(d.personalInfo.role?.toLowerCase() || '')) kw += 30;
+  if (summaryWords.length > 80) kw += 20;
+  if (summaryWords.length > 150) kw += 10;
+  kw = Math.min(kw, 100);
+
+  // Structure
+  if (d.personalInfo.name) struct += 20;
+  if (d.personalInfo.email) struct += 20;
+  if (d.personalInfo.phone) struct += 10;
+  if (d.personalInfo.city) struct += 10;
+  if (d.summary) struct += 20;
+  if (d.skills.length > 0) struct += 20;
+
+  // Clarity
+  const sumLen = (d.summary || '').length;
+  if (sumLen > 50 && sumLen < 500) clarity = 80;
+  else if (sumLen > 0) clarity = 50;
+  if (d.personalInfo.role) clarity = Math.min(clarity + 20, 100);
+
+  // Experience
+  if (d.entries.length >= 2) exp = 100;
+  else if (d.entries.length === 1) exp = 65;
+  else if (d.candidateType === 'first-job' || d.candidateType === 'apprentice') exp = 50;
+  else exp = 20;
+
+  const total = Math.round((kw * 0.35 + struct * 0.3 + clarity * 0.2 + exp * 0.15));
+
+  // animate
+  setTimeout(() => {
+    setBar('kw', kw); setBar('struct', struct); setBar('clarity', clarity); setBar('exp', exp);
+    animateNum('ats-num', total);
+    const circle = document.getElementById('ats-circle');
+    circle.className = 'ats-score-circle ' + (total >= 75 ? 'high' : total >= 50 ? 'mid' : 'low');
+    renderATSTips(total, kw, struct, clarity, exp);
+  }, 400);
+}
+
+function setBar(id, val) {
+  document.getElementById('bar-'+id).style.width = val + '%';
+  document.getElementById('val-'+id).textContent = val + '%';
+}
+
+function animateNum(id, target) {
+  let cur = 0;
+  const el = document.getElementById(id);
+  const step = Math.ceil(target / 30);
+  const iv = setInterval(() => {
+    cur = Math.min(cur + step, target);
+    el.textContent = cur;
+    if (cur >= target) clearInterval(iv);
+  }, 30);
+}
+
+function renderATSTips(total, kw, struct, clarity, exp) {
+  const tips = [];
+  if (kw < 60) tips.push(lang==='pt' ? '⚠️ Adicione mais palavras-chave da vaga no resumo e nas habilidades.' : '⚠️ Add more job-related keywords to your summary and skills.');
+  if (struct < 80) tips.push(lang==='pt' ? '⚠️ Preencha todos os dados de contato (nome, e-mail, telefone, cidade).' : '⚠️ Fill in all contact details (name, email, phone, city).');
+  if (clarity < 60) tips.push(lang==='pt' ? '⚠️ Escreva um resumo profissional mais detalhado (mín. 80 caracteres).' : '⚠️ Write a more detailed professional summary (min. 80 chars).');
+  if (exp < 60) tips.push(lang==='pt' ? '⚠️ Adicione pelo menos uma entrada de experiência ou formação.' : '⚠️ Add at least one experience or education entry.');
+  if (total >= 75) tips.unshift(lang==='pt' ? '✅ Seu currículo está bem otimizado para ATS!' : '✅ Your resume is well optimized for ATS!');
+
+  document.getElementById('ats-tips').innerHTML = tips.map(t => `<div class="ats-tip">${t}</div>`).join('');
+}
+
+// ============================================================
+// PDF DOWNLOAD
+// ============================================================
+function downloadPDF() {
+  const { jsPDF } = window.jspdf;
+  if (!jsPDF) { alert('jsPDF not loaded'); return; }
+  const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+  const d = resumeData;
+  const p = d.personalInfo;
+  let y = 20;
+
+  // Header
+  doc.setFillColor(26, 23, 20);
+  doc.rect(0, 0, 210, 50, 'F');
+  doc.setTextColor(240, 237, 232);
+  doc.setFontSize(22);
+  doc.setFont('helvetica', 'bold');
+  doc.text(p.name || 'Nome', 15, 22);
+  if (p.role) { doc.setFontSize(10); doc.setFont('helvetica', 'normal'); doc.text(p.role.toUpperCase(), 15, 30); }
+  let cx = 15;
+  doc.setFontSize(9);
+  if (p.email) { doc.text('✉ ' + p.email, cx, 40); cx += 65; }
+  if (p.phone) { doc.text('✆ ' + p.phone, cx, 40); cx += 45; }
+  if (p.city) { doc.text('⊙ ' + p.city, cx, 40); }
+  y = 60;
+
+  doc.setTextColor(26, 23, 20);
+
+  if (d.summary) {
+    doc.setFontSize(9); doc.setFont('helvetica', 'bold'); doc.setTextColor(212,80,10);
+    doc.text(lang==='pt'?'RESUMO PROFISSIONAL':'PROFESSIONAL SUMMARY', 15, y);
+    y += 3; doc.setDrawColor(212,80,10); doc.setLineWidth(0.5); doc.line(15, y, 195, y); y += 5;
+    doc.setFont('helvetica', 'normal'); doc.setTextColor(61,53,48);
+    const lines = doc.splitTextToSize(d.summary, 180);
+    doc.text(lines, 15, y); y += lines.length * 5 + 8;
+  }
+
+  if (d.entries.length > 0) {
+    doc.setFontSize(9); doc.setFont('helvetica', 'bold'); doc.setTextColor(212,80,10);
+    const expTitle = (d.candidateType==='first-job'||d.candidateType==='apprentice')
+      ? (lang==='pt'?'FORMAÇÃO & CURSOS':'EDUCATION & COURSES')
+      : (lang==='pt'?'EXPERIÊNCIA PROFISSIONAL':'WORK EXPERIENCE');
+    doc.text(expTitle, 15, y);
+    y += 3; doc.setDrawColor(212,80,10); doc.setLineWidth(0.5); doc.line(15, y, 195, y); y += 5;
+    d.entries.forEach(e => {
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(10); doc.setTextColor(26,23,20);
+      doc.text(e.role || '', 15, y);
+      doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(212,80,10);
+      doc.text(e.company || '', 15, y + 4);
+      doc.setTextColor(100,90,80);
+      doc.text(formatPeriod(e.start, e.end), 15, y + 8);
+      if (e.desc) { const dlines = doc.splitTextToSize(e.desc, 180); doc.setTextColor(61,53,48); doc.text(dlines, 15, y+12); y += dlines.length*4; }
+      y += 18;
+    });
+  }
+
+  if (d.skills.length > 0) {
+    doc.setFontSize(9); doc.setFont('helvetica', 'bold'); doc.setTextColor(212,80,10);
+    doc.text(lang==='pt'?'HABILIDADES':'SKILLS', 15, y);
+    y += 3; doc.setDrawColor(212,80,10); doc.setLineWidth(0.5); doc.line(15, y, 195, y); y += 6;
+    doc.setFont('helvetica', 'normal'); doc.setTextColor(61,53,48);
+    const chunks = d.skills.join('  •  ');
+    const slines = doc.splitTextToSize(chunks, 180);
+    doc.text(slines, 15, y);
+  }
+
+  doc.save('curriculo-smartcv.pdf');
+}
+
+// ============================================================
+// SAVE / LOAD
+// ============================================================
+function saveResume() {
+  const saves = JSON.parse(localStorage.getItem('smartcv-resumes') || '[]');
+  const existing = saves.findIndex(r => r.id === resumeData.id);
+  const entry = { ...resumeData, id: resumeData.id || Date.now(), savedAt: new Date().toLocaleDateString(lang==='pt'?'pt-BR':'en-US') };
+  resumeData.id = entry.id;
+  if (existing >= 0) saves[existing] = entry;
+  else saves.push(entry);
+  localStorage.setItem('smartcv-resumes', JSON.stringify(saves));
+  alert(lang==='pt'?'✅ Currículo salvo com sucesso!':'✅ Resume saved successfully!');
+}
+
+function renderDashboard() {
+  const saves = JSON.parse(localStorage.getItem('smartcv-resumes') || '[]');
+  const list = document.getElementById('dash-list');
+  if (saves.length === 0) {
+    list.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">📄</div>
+        <h3 class="empty-title" data-i18n="dash-empty-t">${lang==='pt'?'Nenhum currículo salvo':'No saved resumes'}</h3>
+        <p class="empty-sub">${lang==='pt'?'Crie seu primeiro currículo otimizado para ATS.':'Create your first ATS-optimized resume.'}</p>
+        <button class="btn-primary" onclick="startBuilder()">${lang==='pt'?'+ Criar currículo':'+ Create resume'}</button>
+      </div>`;
+    return;
+  }
+  list.innerHTML = saves.map(r => {
+    const kw = r.skills?.length || 0;
+    const hasSum = r.summary?.length > 50;
+    const hasExp = r.entries?.length > 0;
+    const hasContact = r.personalInfo?.email && r.personalInfo?.name;
+    const score = Math.min(100, Math.round((kw>=5?35:kw>=2?20:0) + (hasContact?40:0) + (hasSum?15:0) + (hasExp?10:0)));
+    const scoreColor = score>=75?'var(--green)':score>=50?'var(--amber)':'#c0392b';
+    return `
+    <div class="resume-card">
+      <div class="rc-info">
+        <h3>${r.personalInfo?.name || (lang==='pt'?'Sem nome':'No name')}</h3>
+        <p>${r.personalInfo?.role || ''} ${r.savedAt ? '· ' + r.savedAt : ''}</p>
+      </div>
+      <div class="rc-score">
+        <span class="rc-score-num" style="color:${scoreColor}">${score}</span>
+        <span class="rc-score-label">ATS</span>
+      </div>
+      <div class="rc-actions">
+        <button class="btn-sm btn-sm-ghost" onclick="loadResume(${r.id})">${lang==='pt'?'Abrir':'Open'}</button>
+        <button class="btn-sm btn-sm-primary" onclick="deleteResume(${r.id})">${lang==='pt'?'Excluir':'Delete'}</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function loadResume(id) {
+  const saves = JSON.parse(localStorage.getItem('smartcv-resumes') || '[]');
+  const r = saves.find(x => x.id === id);
+  if (!r) return;
+  resumeData = r;
+  buildResumeDoc();
+  computeATS();
+  showPage('preview');
+}
+
+function deleteResume(id) {
+  if (!confirm(lang==='pt'?'Excluir este currículo?':'Delete this resume?')) return;
+  let saves = JSON.parse(localStorage.getItem('smartcv-resumes') || '[]');
+  saves = saves.filter(x => x.id !== id);
+  localStorage.setItem('smartcv-resumes', JSON.stringify(saves));
+  renderDashboard();
+}
+
+// ============================================================
+// INIT
+// ============================================================
+// detect browser language
+if (navigator.language.startsWith('en')) lang = 'en';
+applyLang();
+</script>
+</body>
+</html>
