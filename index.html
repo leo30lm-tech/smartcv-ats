@@ -39,7 +39,7 @@
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   body {
     font-family: var(--font-body);
-    background: var(--bg);
+    background: radial-gradient(circle at 0% 0%, var(--bg2) 0%, var(--bg) 45%, var(--bg) 100%);
     color: var(--ink);
     min-height: 100vh;
     transition: background 0.3s, color 0.3s;
@@ -48,7 +48,8 @@
   /* NAV */
   nav {
     position: sticky; top: 0; z-index: 100;
-    background: var(--card);
+    background: rgba(255, 255, 255, 0.86);
+    backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--border);
     padding: 0 32px;
     height: 60px;
@@ -134,7 +135,9 @@
     background: var(--card); border: 1px solid var(--border);
     border-radius: var(--radius); padding: 24px;
     box-shadow: var(--shadow);
+    transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
   }
+  .feature-card:hover { transform: translateY(-4px); border-color: rgba(212,80,10,0.35); box-shadow: 0 10px 26px rgba(26,23,20,0.12); }
   .feature-icon { font-size: 28px; margin-bottom: 12px; }
   .feature-title { font-family: var(--font-head); font-size: 15px; font-weight: 700; margin-bottom: 6px; }
   .feature-desc { font-size: 13px; color: var(--ink2); line-height: 1.5; }
@@ -143,6 +146,13 @@
   .builder-wrap {
     max-width: 680px; margin: 0 auto;
     padding: 40px 24px 100px;
+  }
+  .builder-step {
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 26px;
+    box-shadow: var(--shadow);
   }
   .step-bar {
     display: flex; gap: 6px; margin-bottom: 32px;
@@ -223,7 +233,9 @@
   /* BOTTOM NAV */
   .builder-footer {
     position: fixed; bottom: 0; left: 0; right: 0;
-    background: var(--card); border-top: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.90);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid var(--border);
     padding: 16px 24px;
     display: flex; align-items: center; justify-content: space-between;
     z-index: 50;
@@ -286,7 +298,39 @@
     background: var(--bg2); border-radius: 8px; margin-bottom: 6px;
     display: flex; gap: 8px; align-items: flex-start;
   }
+  .ats-keyword-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 14px;
+  }
+  .ats-chip-box {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px;
+  }
+  .ats-chip-title {
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--ink2);
+  }
+  .ats-chips { display:flex; flex-wrap:wrap; gap:6px; }
+  .ats-chip {
+    font-size: 11px;
+    border-radius: 999px;
+    padding: 5px 10px;
+    border: 1px solid var(--border);
+    background: var(--card);
+  }
+  .ats-chip.ok { border-color: rgba(45,122,79,0.4); background: rgba(45,122,79,0.15); color: var(--green); }
+  .ats-chip.miss { border-color: rgba(192,57,43,0.4); background: rgba(192,57,43,0.08); color: #c0392b; }
   .ats-tip .icon { flex-shrink: 0; }
+
+  [data-theme="dark"] nav { background: rgba(37, 35, 32, 0.86); }
+  [data-theme="dark"] .builder-step { background: rgba(37, 35, 32, 0.92); }
+  [data-theme="dark"] .builder-footer { background: rgba(37, 35, 32, 0.90); }
 
   /* RESUME DOCUMENT */
   #resume-doc {
@@ -378,7 +422,23 @@
     .two-col { grid-template-columns: 1fr; }
     .res-body { grid-template-columns: 1fr; }
     .resume-card { flex-direction: column; align-items: flex-start; }
-    nav { padding: 0 16px; }
+    nav { padding: 10px 14px; height: auto; gap: 8px; align-items: flex-start; flex-direction: column; }
+    .nav-controls { width: 100%; justify-content: flex-end; flex-wrap: wrap; }
+    .builder-wrap { padding: 24px 14px 120px; }
+    .builder-step { padding: 18px; border-radius: 14px; }
+    .hero-sub { font-size: 15px; line-height: 1.55; }
+    .hero-btns { width: 100%; }
+    .hero-btns button { width: 100%; }
+    .preview-actions { width: 100%; }
+    .preview-actions button { width: 100%; }
+    .builder-footer {
+      padding: 12px 14px calc(12px + env(safe-area-inset-bottom));
+      gap: 10px;
+    }
+    .btn-back, #btn-next { padding: 10px 14px; font-size: 13px; }
+    .step-counter { font-size: 12px; }
+    .ats-bar-row { grid-template-columns: 94px 1fr 34px; gap: 7px; }
+    .ats-keyword-grid { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -523,6 +583,10 @@
         <label data-i18n="lbl-summary">Resumo *</label>
         <textarea id="f-summary" rows="5" placeholder="Ex: Jovem em busca da primeira oportunidade como Jovem Aprendiz, com interesse em aprender e desenvolver habilidades na área administrativa. Organizado, responsável e com rápida capacidade de aprendizado."></textarea>
       </div>
+      <div class="field-group">
+        <label data-i18n="lbl-jobdesc">Descrição da vaga (opcional, melhora o score ATS)</label>
+        <textarea id="f-jobdesc" rows="4" placeholder="Cole aqui a descrição da vaga para comparar palavras-chave automaticamente."></textarea>
+      </div>
       <div style="margin-top:8px;">
         <p style="font-size:12px;color:var(--ink2);" data-i18n="s2-tip">💡 Dica ATS: inclua o nome do cargo desejado no resumo, escreva em 3ª pessoa e mencione sua principal habilidade.</p>
       </div>
@@ -616,7 +680,7 @@
         <p style="font-size:13px;color:var(--ink2);margin-top:2px;" data-i18n="prev-sub">Assim que o recrutador irá ver o seu currículo</p>
       </div>
       <div class="preview-actions">
-        <button class="btn-secondary btn-sm" onclick="showPage('builder'); currentStep=4; renderStep();" data-i18n="btn-edit">✏️ Editar</button>
+        <button class="btn-secondary btn-sm" onclick="openEditor()" data-i18n="btn-edit">✏️ Editar</button>
         <button class="btn-pdf" onclick="saveResume()" data-i18n="btn-save">💾 Salvar</button>
         <button class="btn-primary" onclick="downloadPDF()" data-i18n="btn-pdf">⬇️ Baixar PDF</button>
       </div>
@@ -651,6 +715,16 @@
         </div>
       </div>
       <div class="ats-tips" id="ats-tips"></div>
+      <div class="ats-keyword-grid">
+        <div class="ats-chip-box">
+          <div class="ats-chip-title" data-i18n="ats-match">Palavras-chave encontradas</div>
+          <div class="ats-chips" id="ats-keywords-ok"></div>
+        </div>
+        <div class="ats-chip-box">
+          <div class="ats-chip-title" data-i18n="ats-missing">Palavras-chave faltando</div>
+          <div class="ats-chips" id="ats-keywords-miss"></div>
+        </div>
+      </div>
     </div>
 
     <!-- Resume Document -->
@@ -710,6 +784,7 @@ let resumeData = {
   candidateType: null,
   personalInfo: {},
   summary: '',
+  jobDescription: '',
   entries: [],  // experience or education
   skills: []
 };
@@ -730,6 +805,7 @@ const translations = {
     'lbl-name':'Nome completo *','lbl-email':'E-mail *','lbl-phone':'Telefone','lbl-city':'Cidade / Estado',
     'lbl-role':'Cargo desejado','lbl-linkedin':'LinkedIn (opcional)',
     's2-label':'Etapa 3 de 6','s2-title':'Resumo profissional','s2-sub':'2–3 frases sobre quem você é e o que busca.',
+    'lbl-jobdesc':'Descrição da vaga (opcional, melhora o score ATS)',
     's2-tip':'💡 Dica ATS: inclua o nome do cargo desejado, escreva em 3ª pessoa e mencione sua principal habilidade.',
     's2-templates':'Templates para usar:',
     's3-sub':'Adicione suas experiências. Foque em resultados e números quando possível.',
@@ -740,7 +816,7 @@ const translations = {
     'prev-title':'Preview do Currículo','prev-sub':'Assim que o recrutador irá ver o seu currículo',
     'btn-edit':'✏️ Editar','btn-save':'💾 Salvar','btn-pdf':'⬇️ Baixar PDF',
     'ats-title':'Análise ATS','ats-kw':'Palavras-chave','ats-struct':'Estrutura',
-    'ats-clarity':'Clareza','ats-exp':'Experiência',
+    'ats-clarity':'Clareza','ats-exp':'Experiência','ats-match':'Palavras-chave encontradas','ats-missing':'Palavras-chave faltando',
     'res-summary':'RESUMO PROFISSIONAL','res-skills':'HABILIDADES','res-profile':'PERFIL','res-contact':'CONTATO',
     'dash-title':'Meus Currículos','dash-new':'+ Novo currículo',
     'feat1-t':'Score ATS automático','feat1-d':'Saiba em tempo real se o seu currículo passaria pelo filtro automático.',
@@ -760,6 +836,7 @@ const translations = {
     'lbl-name':'Full name *','lbl-email':'Email *','lbl-phone':'Phone','lbl-city':'City / State',
     'lbl-role':'Target role','lbl-linkedin':'LinkedIn (optional)',
     's2-label':'Step 3 of 6','s2-title':'Professional summary','s2-sub':'2–3 sentences about who you are and what you seek.',
+    'lbl-jobdesc':'Job description (optional, improves ATS score)',
     's2-tip':'💡 ATS tip: include the target job title, write in third person, and mention your top skill.',
     's2-templates':'Templates to use:',
     's3-sub':'Add your experiences. Focus on results and numbers when possible.',
@@ -770,7 +847,7 @@ const translations = {
     'prev-title':'Resume Preview','prev-sub':'How the recruiter will see your resume',
     'btn-edit':'✏️ Edit','btn-save':'💾 Save','btn-pdf':'⬇️ Download PDF',
     'ats-title':'ATS Analysis','ats-kw':'Keywords','ats-struct':'Structure',
-    'ats-clarity':'Clarity','ats-exp':'Experience',
+    'ats-clarity':'Clarity','ats-exp':'Experience','ats-match':'Matched keywords','ats-missing':'Missing keywords',
     'res-summary':'PROFESSIONAL SUMMARY','res-skills':'SKILLS','res-profile':'PROFILE','res-contact':'CONTACT',
     'dash-title':'My Resumes','dash-new':'+ New resume',
     'feat1-t':'Automatic ATS Score','feat1-d':'Know in real time if your resume passes the automatic filter.',
@@ -819,7 +896,7 @@ function showPage(id) {
 }
 
 function startBuilder() {
-  resumeData = { candidateType: null, personalInfo: {}, summary: '', entries: [], skills: [] };
+  resumeData = { candidateType: null, personalInfo: {}, summary: '', jobDescription: '', entries: [], skills: [] };
   currentStep = 0;
   showPage('builder');
   renderStep();
@@ -913,7 +990,29 @@ function collectStep() {
   }
   if (currentStep === 2) {
     resumeData.summary = document.getElementById('f-summary').value.trim();
+    resumeData.jobDescription = document.getElementById('f-jobdesc').value.trim();
   }
+}
+
+function escapeHtml(value) {
+  return String(value || '')
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+}
+
+function hydrateBuilderFields() {
+  const p = resumeData.personalInfo || {};
+  document.getElementById('f-name').value = p.name || '';
+  document.getElementById('f-email').value = p.email || '';
+  document.getElementById('f-phone').value = p.phone || '';
+  document.getElementById('f-city').value = p.city || '';
+  document.getElementById('f-role').value = p.role || '';
+  document.getElementById('f-linkedin').value = p.linkedin || '';
+  document.getElementById('f-summary').value = resumeData.summary || '';
+  document.getElementById('f-jobdesc').value = resumeData.jobDescription || '';
 }
 
 // Candidate type
@@ -964,12 +1063,12 @@ function renderEntryList() {
     <div class="exp-card">
       <div class="exp-card-head">
         <div>
-          <h4>${e.role || e.company}</h4>
-          <p>${e.company} · ${formatPeriod(e.start, e.end)}</p>
+          <h4>${escapeHtml(e.role || e.company)}</h4>
+          <p>${escapeHtml(e.company)} · ${formatPeriod(e.start, e.end)}</p>
         </div>
         <button class="btn-remove" onclick="removeEntry(${i})">🗑</button>
       </div>
-      ${e.desc ? `<p style="font-size:12px;color:var(--ink2);margin-top:8px;line-height:1.5;">${e.desc}</p>` : ''}
+      ${e.desc ? `<p style="font-size:12px;color:var(--ink2);margin-top:8px;line-height:1.5;">${escapeHtml(e.desc)}</p>` : ''}
     </div>
   `).join('');
 }
@@ -1018,8 +1117,8 @@ function renderSkillsStep() {
 
   const selEl = document.getElementById('skill-selected');
   selEl.innerHTML = resumeData.skills.map(s => `
-    <div class="skill-tag added" onclick="removeSkill('${s}')">
-      ${s} <span class="remove">✕</span>
+    <div class="skill-tag added" onclick="removeSkill(${JSON.stringify(s)})">
+      ${escapeHtml(s)} <span class="remove">✕</span>
     </div>
   `).join('');
 }
@@ -1058,9 +1157,20 @@ function showPreview() {
   window.scrollTo(0,0);
 }
 
+function openEditor() {
+  showPage('builder');
+  hydrateBuilderFields();
+  currentStep = 1;
+  renderStep();
+}
+
 function buildResumeDoc() {
   const d = resumeData;
   const p = d.personalInfo;
+
+  document.getElementById('doc-summary-sec').style.display = 'none';
+  document.getElementById('doc-exp-sec').style.display = 'none';
+  document.getElementById('doc-skills-sec').style.display = 'none';
 
   document.getElementById('doc-name').textContent = p.name || (lang==='pt'?'Seu Nome':'Your Name');
   document.getElementById('doc-role').textContent = p.role || '';
@@ -1071,7 +1181,7 @@ function buildResumeDoc() {
   if (p.phone) contacts.push('📞 ' + p.phone);
   if (p.city) contacts.push('📍 ' + p.city);
   if (p.linkedin) contacts.push('🔗 ' + p.linkedin);
-  document.getElementById('doc-contacts').innerHTML = contacts.map(c => `<span class="res-contact">${c}</span>`).join('');
+  document.getElementById('doc-contacts').innerHTML = contacts.map(c => `<span class="res-contact">${escapeHtml(c)}</span>`).join('');
 
   // summary
   if (d.summary) {
@@ -1087,10 +1197,10 @@ function buildResumeDoc() {
       : (lang==='pt'?'EXPERIÊNCIA PROFISSIONAL':'WORK EXPERIENCE');
     document.getElementById('doc-exp-list').innerHTML = d.entries.map(e => `
       <div class="res-exp">
-        <div class="res-exp-role">${e.role || ''}</div>
-        <div class="res-exp-company">${e.company || ''}</div>
+        <div class="res-exp-role">${escapeHtml(e.role || '')}</div>
+        <div class="res-exp-company">${escapeHtml(e.company || '')}</div>
         <div class="res-exp-period">${formatPeriod(e.start, e.end)}</div>
-        ${e.desc ? `<div class="res-exp-desc">${e.desc}</div>` : ''}
+        ${e.desc ? `<div class="res-exp-desc">${escapeHtml(e.desc)}</div>` : ''}
       </div>
     `).join('');
     document.getElementById('doc-exp-sec').style.display = 'block';
@@ -1098,7 +1208,7 @@ function buildResumeDoc() {
 
   // skills
   if (d.skills.length > 0) {
-    document.getElementById('doc-skills-list').innerHTML = d.skills.map(s => `<span class="res-skill">${s}</span>`).join('');
+    document.getElementById('doc-skills-list').innerHTML = d.skills.map(s => `<span class="res-skill">${escapeHtml(s)}</span>`).join('');
     document.getElementById('doc-skills-sec').style.display = 'block';
   }
 
@@ -1116,7 +1226,7 @@ function buildResumeDoc() {
   if (p.email) sideContact.push(p.email);
   if (p.phone) sideContact.push(p.phone);
   if (p.city) sideContact.push(p.city);
-  document.getElementById('doc-contact-detail').innerHTML = sideContact.join('<br>');
+  document.getElementById('doc-contact-detail').innerHTML = sideContact.map(escapeHtml).join('<br>');
 }
 
 // ============================================================
@@ -1125,15 +1235,30 @@ function buildResumeDoc() {
 function computeATS() {
   const d = resumeData;
   let kw = 0, struct = 0, clarity = 0, exp = 0;
+  const corpus = `${d.summary || ''} ${d.personalInfo.role || ''} ${(d.skills || []).join(' ')} ${(d.entries || []).map(e => `${e.role || ''} ${e.company || ''} ${e.desc || ''}`).join(' ')}`.toLowerCase();
+  const keywordsFromJD = extractKeywords(d.jobDescription || '');
 
-  // Keywords
-  const summaryWords = (d.summary || '').toLowerCase();
+  // Keywords (ATS)
   const skillCount = d.skills.length;
-  if (skillCount >= 5) kw += 40;
-  else if (skillCount >= 2) kw += 20;
-  if (summaryWords.includes(d.personalInfo.role?.toLowerCase() || '')) kw += 30;
-  if (summaryWords.length > 80) kw += 20;
-  if (summaryWords.length > 150) kw += 10;
+  if (skillCount >= 8) kw += 30;
+  else if (skillCount >= 5) kw += 22;
+  else if (skillCount >= 2) kw += 12;
+
+  const role = (d.personalInfo.role || '').toLowerCase().trim();
+  if (role && corpus.includes(role)) kw += 20;
+
+  if ((d.summary || '').length > 80) kw += 10;
+
+  let matchedKeywords = [];
+  let missingKeywords = [];
+  if (keywordsFromJD.length > 0) {
+    matchedKeywords = keywordsFromJD.filter(k => corpus.includes(k));
+    missingKeywords = keywordsFromJD.filter(k => !corpus.includes(k));
+    const coverage = matchedKeywords.length / keywordsFromJD.length;
+    kw += Math.round(coverage * 40);
+  } else {
+    kw += 20; // fallback when user does not provide a job description
+  }
   kw = Math.min(kw, 100);
 
   // Structure
@@ -1141,20 +1266,33 @@ function computeATS() {
   if (d.personalInfo.email) struct += 20;
   if (d.personalInfo.phone) struct += 10;
   if (d.personalInfo.city) struct += 10;
+  if (d.personalInfo.role) struct += 10;
+  if (d.personalInfo.linkedin) struct += 10;
   if (d.summary) struct += 20;
-  if (d.skills.length > 0) struct += 20;
+  if (d.skills.length > 0) struct += 10;
+  if (d.entries.length > 0) struct += 10;
+  struct = Math.min(struct, 100);
 
   // Clarity
   const sumLen = (d.summary || '').length;
-  if (sumLen > 50 && sumLen < 500) clarity = 80;
-  else if (sumLen > 0) clarity = 50;
-  if (d.personalInfo.role) clarity = Math.min(clarity + 20, 100);
+  if (sumLen > 90 && sumLen < 600) clarity = 65;
+  else if (sumLen >= 40) clarity = 45;
+  else if (sumLen > 0) clarity = 25;
+  const actionVerbs = ['liderou','aumentou','desenvolveu','organizou','implemented','improved','led','optimized','created','delivered','reduced','managed'];
+  const hasActionVerbs = actionVerbs.some(v => corpus.includes(v));
+  if (hasActionVerbs) clarity += 15;
+  if (d.personalInfo.role) clarity += 10;
+  if (d.summary && d.summary.includes(',')) clarity += 10;
+  clarity = Math.min(clarity, 100);
 
   // Experience
-  if (d.entries.length >= 2) exp = 100;
+  if (d.entries.length >= 3) exp = 100;
+  else if (d.entries.length === 2) exp = 82;
   else if (d.entries.length === 1) exp = 65;
   else if (d.candidateType === 'first-job' || d.candidateType === 'apprentice') exp = 50;
   else exp = 20;
+  const detailedEntries = d.entries.filter(e => (e.desc || '').length >= 60).length;
+  if (detailedEntries > 0) exp = Math.min(exp + 10, 100);
 
   const total = Math.round((kw * 0.35 + struct * 0.3 + clarity * 0.2 + exp * 0.15));
 
@@ -1164,8 +1302,20 @@ function computeATS() {
     animateNum('ats-num', total);
     const circle = document.getElementById('ats-circle');
     circle.className = 'ats-score-circle ' + (total >= 75 ? 'high' : total >= 50 ? 'mid' : 'low');
-    renderATSTips(total, kw, struct, clarity, exp);
+    renderATSTips(total, kw, struct, clarity, exp, matchedKeywords, missingKeywords);
   }, 400);
+}
+
+function extractKeywords(text) {
+  const stopwords = new Set(['para','com','uma','das','dos','que','por','em','na','no','de','da','do','and','the','for','with','from','this','that','your','vaga','cargo','área','area','será','como','experiência','experience','years']);
+  const cleaned = (text || '')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^\w\s]/g, ' ')
+    .split(/\s+/)
+    .filter(w => w.length >= 4 && !stopwords.has(w));
+  return [...new Set(cleaned)].slice(0, 12);
 }
 
 function setBar(id, val) {
@@ -1184,15 +1334,22 @@ function animateNum(id, target) {
   }, 30);
 }
 
-function renderATSTips(total, kw, struct, clarity, exp) {
+function renderATSTips(total, kw, struct, clarity, exp, matchedKeywords = [], missingKeywords = []) {
   const tips = [];
   if (kw < 60) tips.push(lang==='pt' ? '⚠️ Adicione mais palavras-chave da vaga no resumo e nas habilidades.' : '⚠️ Add more job-related keywords to your summary and skills.');
   if (struct < 80) tips.push(lang==='pt' ? '⚠️ Preencha todos os dados de contato (nome, e-mail, telefone, cidade).' : '⚠️ Fill in all contact details (name, email, phone, city).');
   if (clarity < 60) tips.push(lang==='pt' ? '⚠️ Escreva um resumo profissional mais detalhado (mín. 80 caracteres).' : '⚠️ Write a more detailed professional summary (min. 80 chars).');
   if (exp < 60) tips.push(lang==='pt' ? '⚠️ Adicione pelo menos uma entrada de experiência ou formação.' : '⚠️ Add at least one experience or education entry.');
+  if (missingKeywords.length >= 4) tips.push(lang==='pt' ? '🎯 Cole a descrição da vaga e adicione competências técnicas específicas para aumentar aderência.' : '🎯 Paste the job description and add specific technical competencies to improve match.');
   if (total >= 75) tips.unshift(lang==='pt' ? '✅ Seu currículo está bem otimizado para ATS!' : '✅ Your resume is well optimized for ATS!');
 
   document.getElementById('ats-tips').innerHTML = tips.map(t => `<div class="ats-tip">${t}</div>`).join('');
+  document.getElementById('ats-keywords-ok').innerHTML = matchedKeywords.length
+    ? matchedKeywords.map(k => `<span class="ats-chip ok">${k}</span>`).join('')
+    : `<span class="ats-chip">${lang==='pt'?'Nenhuma ainda':'None yet'}</span>`;
+  document.getElementById('ats-keywords-miss').innerHTML = missingKeywords.length
+    ? missingKeywords.map(k => `<span class="ats-chip miss">${k}</span>`).join('')
+    : `<span class="ats-chip">${lang==='pt'?'Sem pendências':'No gaps'}</span>`;
 }
 
 // ============================================================
@@ -1301,8 +1458,8 @@ function renderDashboard() {
     return `
     <div class="resume-card">
       <div class="rc-info">
-        <h3>${r.personalInfo?.name || (lang==='pt'?'Sem nome':'No name')}</h3>
-        <p>${r.personalInfo?.role || ''} ${r.savedAt ? '· ' + r.savedAt : ''}</p>
+        <h3>${escapeHtml(r.personalInfo?.name || (lang==='pt'?'Sem nome':'No name'))}</h3>
+        <p>${escapeHtml(r.personalInfo?.role || '')} ${r.savedAt ? '· ' + escapeHtml(r.savedAt) : ''}</p>
       </div>
       <div class="rc-score">
         <span class="rc-score-num" style="color:${scoreColor}">${score}</span>
@@ -1320,7 +1477,16 @@ function loadResume(id) {
   const saves = JSON.parse(localStorage.getItem('smartcv-resumes') || '[]');
   const r = saves.find(x => x.id === id);
   if (!r) return;
-  resumeData = r;
+  resumeData = {
+    candidateType: r.candidateType || null,
+    personalInfo: r.personalInfo || {},
+    summary: r.summary || '',
+    jobDescription: r.jobDescription || '',
+    entries: Array.isArray(r.entries) ? r.entries : [],
+    skills: Array.isArray(r.skills) ? r.skills : [],
+    id: r.id,
+    savedAt: r.savedAt
+  };
   buildResumeDoc();
   computeATS();
   showPage('preview');
