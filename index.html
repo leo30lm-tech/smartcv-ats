@@ -1566,10 +1566,10 @@ function selectType(type) {
 function renderSummaryTemplates() {
   const tpl = summaryTemplates[resumeData.candidateType] || summaryTemplates['professional'];
   const cont = document.getElementById('tpl-cards');
-  cont.innerHTML = tpl.map((t, i) => `
+  cont.innerHTML = tpl.map((templateText, i) => `
     <div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;"
       onclick="useTpl(${i})" title="${t('tpl-click','Clique para usar')}">
-      <p style="font-size:13px;color:var(--ink2);line-height:1.5;">${t}</p>
+      <p style="font-size:13px;color:var(--ink2);line-height:1.5;">${templateText}</p>
       <p style="font-size:11px;color:var(--accent);margin-top:6px;font-weight:600;">${t('tpl-use','↑ Usar este template')}</p>
     </div>
   `).join('');
@@ -2172,6 +2172,54 @@ function downloadPDF() {
     const chunks = d.skills.join('  •  ');
     const slines = doc.splitTextToSize(chunks, 180);
     doc.text(slines, 15, y);
+    y += slines.length * 5 + 8;
+  }
+
+  if (d.education.length > 0) {
+    doc.setFontSize(9); doc.setFont('helvetica', 'bold'); doc.setTextColor(212,80,10);
+    doc.text(t('res-education', 'FORMAÇÃO ACADÊMICA'), 15, y);
+    y += 3; doc.setDrawColor(212,80,10); doc.setLineWidth(0.5); doc.line(15, y, 195, y); y += 5;
+    d.education.forEach(edu => {
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(10); doc.setTextColor(26,23,20);
+      doc.text(edu.course || '', 15, y);
+      doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(212,80,10);
+      doc.text(edu.institution || '', 15, y + 4);
+      doc.setTextColor(100,90,80);
+      doc.text(edu.year || '', 15, y + 8);
+      y += 16;
+    });
+  }
+
+  if (d.projects.length > 0) {
+    doc.setFontSize(9); doc.setFont('helvetica', 'bold'); doc.setTextColor(212,80,10);
+    doc.text(t('res-projects', 'PROJETOS'), 15, y);
+    y += 3; doc.setDrawColor(212,80,10); doc.setLineWidth(0.5); doc.line(15, y, 195, y); y += 5;
+    d.projects.forEach(project => {
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(10); doc.setTextColor(26,23,20);
+      doc.text(project.name || '', 15, y);
+      if (project.tech) {
+        doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(212,80,10);
+        const projectTech = doc.splitTextToSize(project.tech, 180);
+        doc.text(projectTech, 15, y + 4);
+        y += projectTech.length * 4;
+      }
+      if (project.desc) {
+        doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(61,53,48);
+        const projectDesc = doc.splitTextToSize(project.desc, 180);
+        doc.text(projectDesc, 15, y + 8);
+        y += projectDesc.length * 4;
+      }
+      y += 14;
+    });
+  }
+
+  if (d.languages.length > 0) {
+    doc.setFontSize(9); doc.setFont('helvetica', 'bold'); doc.setTextColor(212,80,10);
+    doc.text(t('res-languages', 'IDIOMAS'), 15, y);
+    y += 3; doc.setDrawColor(212,80,10); doc.setLineWidth(0.5); doc.line(15, y, 195, y); y += 6;
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(61,53,48);
+    const langLines = d.languages.map(lang => `${lang.name || ''}: ${lang.level || ''}`);
+    doc.text(langLines, 15, y);
   }
 
   doc.save('curriculo-inteligente.pdf');
