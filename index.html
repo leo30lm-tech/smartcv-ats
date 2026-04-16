@@ -3,9 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<codex/work-on-this-project-z11neb
 <meta name="theme-color" content="#FF6B2C">
 <link rel="manifest" href="/manifest.json">
 <title>App</title>
+<title>Currículo Inteligente — Criador de Currículos</title>
+main
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap');
@@ -453,7 +456,11 @@
 
 <!-- NAV -->
 <nav>
+ codex/work-on-this-project-z11neb
   <div class="nav-logo" id="app-logo" data-i18n-html="app-logo">App</div>
+
+  <div class="nav-logo">Currículo <span>Inteligente</span></div>
+ main
   <div class="nav-controls">
     <button class="btn-icon" id="btn-dashboard" onclick="showPage('dashboard')" style="display:none">📂 Meus Currículos</button>
     <button class="btn-icon" id="btn-lang" onclick="toggleLang()">🌐 EN</button>
@@ -575,21 +582,35 @@
           <input type="text" id="f-role" placeholder="Ex: Assistente Administrativo" />
         </div>
       </div>
+codex/work-on-this-project-z11neb
       <div class="field-group" id="fg-linkedin">
+
+      <div class="field-group">
+main
         <label data-i18n="lbl-linkedin">LinkedIn *</label>
         <input type="text" id="f-linkedin" placeholder="linkedin.com/in/seu-perfil" />
       </div>
       <div class="two-col">
+codex/work-on-this-project-z11neb
         <div class="field-group" id="fg-portfolio">
           <label data-i18n="lbl-portfolio">Portfólio *</label>
           <input type="text" id="f-portfolio" placeholder="seusite.com ou behance.net/seuperfil" />
         </div>
         <div class="field-group" id="fg-github">
+
+        <div class="field-group">
+          <label data-i18n="lbl-portfolio">Portfólio *</label>
+          <input type="text" id="f-portfolio" placeholder="seusite.com ou behance.net/seuperfil" />
+        </div>
+        <div class="field-group">
+main
           <label data-i18n="lbl-github">GitHub *</label>
           <input type="text" id="f-github" placeholder="github.com/seuusuario" />
         </div>
       </div>
+ codex/work-on-this-project-z11neb
       <p id="profile-context-note" style="font-size:12px;color:var(--ink2);margin-top:4px;"></p>
+ main
     </div>
 
     <!-- STEP 2: Summary -->
@@ -965,17 +986,23 @@ const translations = {
     'edu-title':'Formação acadêmica (obrigatório)','lbl-course':'Curso *','lbl-inst':'Instituição *','lbl-year':'Ano *','btn-add-edu':'Adicionar formação',
     'proj-title':'Projetos (obrigatório)','lbl-proj-name':'Nome do projeto *','lbl-proj-desc':'Descrição *','lbl-proj-tech':'Tecnologias *','btn-add-proj':'Adicionar projeto',
     'lang-title':'Idiomas (obrigatório)','lbl-lang-name':'Idioma *','lbl-lang-level':'Nível *','btn-add-lang':'Adicionar idioma',
+codex/work-on-this-project-z11neb
     'appName':'Currículo Inteligente',
     'app-logo':'Currículo <span>Inteligente</span>',
+main
     'app-title':'Currículo Inteligente — Criador de Currículos',
     'hero-badge':'🎯 Otimizado para ATS','hero-title':'Seu currículo merece chegar nas <em>mãos certas</em>','hero-sub':'Crie um currículo moderno, aprovado pelos sistemas ATS e que chama atenção dos recrutadores — em minutos.',
     'hero-btn-create':'✏️ Criar currículo agora','hero-btn-list':'📂 Meus currículos',
     'err-select-type':'Selecione um tipo de candidato.',
     'err-required-links':'Nome, e-mail e links profissionais (LinkedIn, portfólio e GitHub) são obrigatórios.',
+codex/work-on-this-project-z11neb
     'err-required-contextual':'Preencha nome, e-mail e os links relevantes para o perfil.',
     'err-edu-required':'Adicione pelo menos uma formação acadêmica.',
     'err-exp-required':'Adicione pelo menos uma experiência.',
     'err-skill-required':'Adicione pelo menos uma habilidade.',
+
+    'err-edu-required':'Adicione pelo menos uma formação acadêmica.',
+main
     'err-project-required':'Adicione pelo menos um projeto.',
     'err-language-required':'Adicione pelo menos um idioma.',
     'err-jobdesc-required':'Cole primeiro uma descrição de vaga para otimizar o currículo.',
@@ -993,6 +1020,7 @@ const translations = {
     'tip-stuffing-prefix':'⚠️ Evite repetição excessiva da palavra-chave "','tip-stuffing-suffix':'" (keyword stuffing).',
     'tip-missing-many':'🎯 Cole a descrição da vaga e adicione competências técnicas específicas para aumentar aderência.',
     'tip-good':'✅ Seu currículo está bem otimizado para ATS!','none-yet':'Nenhuma ainda','no-gaps':'Sem pendências',
+codex/work-on-this-project-z11neb
     'tip-profile-tech':'💡 Perfil tecnologia: destaque stack técnica, GitHub e projetos com impacto.',
     'tip-profile-lead':'💡 Perfil liderança: enfatize gestão de times, resultados e decisões estratégicas.',
     'tip-profile-admin':'💡 Perfil administrativo: enfatize organização, processos e indicadores.',
@@ -1001,6 +1029,7 @@ const translations = {
     'profile-note-liderança':'Perfil detectado: liderança. LinkedIn é essencial para destacar trajetória executiva.',
     'profile-note-administrativo':'Perfil detectado: administrativo. LinkedIn é recomendado.',
     'profile-note-operacional':'Perfil detectado: operacional. Links técnicos não são obrigatórios.',
+ main
     'doc-summary':'RESUMO PROFISSIONAL','doc-skills':'HABILIDADES','save-success':'✅ Currículo salvo com sucesso!',
     'dash-empty-sub':'Crie seu primeiro currículo otimizado para ATS.','dash-empty-btn':'+ Criar currículo','no-name':'Sem nome',
     'btn-open':'Abrir','btn-delete':'Excluir','confirm-delete':'Excluir este currículo?',
@@ -1046,17 +1075,25 @@ const translations = {
     'edu-title':'Education (required)','lbl-course':'Course *','lbl-inst':'Institution *','lbl-year':'Year *','btn-add-edu':'Add education',
     'proj-title':'Projects (required)','lbl-proj-name':'Project name *','lbl-proj-desc':'Description *','lbl-proj-tech':'Technologies *','btn-add-proj':'Add project',
     'lang-title':'Languages (required)','lbl-lang-name':'Language *','lbl-lang-level':'Level *','btn-add-lang':'Add language',
+codex/work-on-this-project-z11neb
     'appName':'Smart Resume',
     'app-logo':'Smart <span>Resume</span>',
     'app-title':'Smart Resume — Resume Builder',
+
+    'app-title':'Currículo Inteligente — Resume Builder',
+ main
     'hero-badge':'🎯 ATS Optimized','hero-title':'Your resume deserves to reach the <em>right hands</em>','hero-sub':'Create a modern resume, approved by ATS systems and attractive to recruiters — in minutes.',
     'hero-btn-create':'✏️ Create resume now','hero-btn-list':'📂 My resumes',
     'err-select-type':'Please select a candidate type.',
     'err-required-links':'Name, email and professional links (LinkedIn, portfolio and GitHub) are required.',
+codex/work-on-this-project-z11neb
     'err-required-contextual':'Fill name, email, and profile-relevant links.',
     'err-edu-required':'Add at least one academic education entry.',
     'err-exp-required':'Add at least one experience entry.',
     'err-skill-required':'Add at least one skill.',
+
+    'err-edu-required':'Add at least one academic education entry.',
+ main
     'err-project-required':'Add at least one project.',
     'err-language-required':'Add at least one language.',
     'err-jobdesc-required':'Paste a job description first to optimize the resume.',
@@ -1074,6 +1111,7 @@ const translations = {
     'tip-stuffing-prefix':'⚠️ Avoid excessive repetition of keyword "','tip-stuffing-suffix':'" (keyword stuffing).',
     'tip-missing-many':'🎯 Paste the job description and add specific technical competencies to improve match.',
     'tip-good':'✅ Your resume is well optimized for ATS!','none-yet':'None yet','no-gaps':'No gaps',
+ codex/work-on-this-project-z11neb
     'tip-profile-tech':'💡 Technology profile: highlight technical stack, GitHub, and project impact.',
     'tip-profile-lead':'💡 Leadership profile: emphasize team management, business outcomes, and strategic decisions.',
     'tip-profile-admin':'💡 Administrative profile: emphasize organization, process control, and KPIs.',
@@ -1082,6 +1120,7 @@ const translations = {
     'profile-note-liderança':'Detected profile: leadership. LinkedIn is essential to highlight executive trajectory.',
     'profile-note-administrativo':'Detected profile: administrative. LinkedIn is recommended.',
     'profile-note-operacional':'Detected profile: operational. Technical links are not mandatory.',
+ main
     'doc-summary':'PROFESSIONAL SUMMARY','doc-skills':'SKILLS','save-success':'✅ Resume saved successfully!',
     'dash-empty-sub':'Create your first ATS-optimized resume.','dash-empty-btn':'+ Create resume','no-name':'No name',
     'btn-open':'Open','btn-delete':'Delete','confirm-delete':'Delete this resume?',
@@ -1109,7 +1148,11 @@ function applyLang() {
     const key = el.getAttribute('data-i18n-html');
     if (translations[lang][key]) el.innerHTML = translations[lang][key];
   });
+ codex/work-on-this-project-z11neb
   document.title = t('app-title', `${t('appName','App')} — Resume Builder`);
+
+  if (translations[lang]['app-title']) document.title = translations[lang]['app-title'];
+main
   const phMap = {
     'f-name':'ph-name','f-email':'ph-email','f-phone':'ph-phone','f-city':'ph-city','f-role':'ph-role',
     'f-linkedin':'ph-linkedin','f-portfolio':'ph-portfolio','f-github':'ph-github','f-summary':'ph-summary','f-jobdesc':'ph-jobdesc',
@@ -1148,6 +1191,7 @@ function detectBrowserLang() {
   return 'pt';
 }
 
+ codex/work-on-this-project-z11neb
 function detectProfileCategory() {
   const text = `${resumeData.personalInfo?.role || ''} ${resumeData.jobDescription || ''}`.toLowerCase();
   if (/(dev|developer|engenheiro de software|software engineer|dados|data|programador|frontend|backend|full stack|qa|cloud|infra|ti|tecnologia)/.test(text)) return 'tecnologia';
@@ -1181,6 +1225,8 @@ function applyProfileContextUI() {
   if (note) note.textContent = t(`profile-note-${profile}`, '');
 }
 
+
+ main
 // ============================================================
 // THEME
 // ============================================================
@@ -1208,7 +1254,11 @@ function showPage(id) {
 }
 
 function startBuilder() {
+codex/work-on-this-project-z11neb
   resumeData = { candidateType: null, profileCategory: 'administrativo', personalInfo: {}, summary: '', jobDescription: '', entries: [], education: [], projects: [], languages: [], skills: [] };
+
+  resumeData = { candidateType: null, personalInfo: {}, summary: '', jobDescription: '', entries: [], education: [], projects: [], languages: [], skills: [] };
+main
   currentStep = 0;
   showPage('builder');
   renderStep();
@@ -1285,6 +1335,7 @@ function validateStep() {
     const linkedin = document.getElementById('f-linkedin').value.trim();
     const portfolio = document.getElementById('f-portfolio').value.trim();
     const github = document.getElementById('f-github').value.trim();
+ codex/work-on-this-project-z11neb
     const policy = getLinkPolicy(detectProfileCategory());
     const requiredMissing =
       (policy.required.includes('linkedin') && !linkedin) ||
@@ -1292,6 +1343,10 @@ function validateStep() {
       (policy.required.includes('github') && !github);
     if (!name || !email || requiredMissing) {
       alert(t('err-required-contextual', 'Preencha nome, e-mail e os links relevantes para o perfil.'));
+
+    if (!name || !email || !linkedin || !portfolio || !github) {
+      alert(t('err-required-links', 'Nome, e-mail e links profissionais (LinkedIn, portfólio e GitHub) são obrigatórios.'));
+ main
       return false;
     }
   }
@@ -1300,6 +1355,7 @@ function validateStep() {
     return false;
   }
   if (currentStep === 4) {
+codex/work-on-this-project-z11neb
     if (resumeData.entries.length === 0) {
       alert(t('err-exp-required', 'Adicione pelo menos uma experiência.'));
       return false;
@@ -1308,6 +1364,7 @@ function validateStep() {
       alert(t('err-skill-required', 'Adicione pelo menos uma habilidade.'));
       return false;
     }
+ main
     if (resumeData.projects.length === 0) {
       alert(t('err-project-required', 'Adicione pelo menos um projeto.'));
       return false;
@@ -1362,7 +1419,9 @@ function hydrateBuilderFields() {
   document.getElementById('f-github').value = p.github || '';
   document.getElementById('f-summary').value = resumeData.summary || '';
   document.getElementById('f-jobdesc').value = resumeData.jobDescription || '';
+ codex/work-on-this-project-z11neb
   applyProfileContextUI();
+ main
 }
 
 function improveTextForATS(rawText, context = 'summary') {
@@ -1753,6 +1812,7 @@ function buildResumeDoc() {
   const d = resumeData;
   const p = d.personalInfo;
   const roleKeyword = (p.role || '').trim();
+codex/work-on-this-project-z11neb
 
   document.getElementById('doc-summary-sec').style.display = 'none';
   document.getElementById('doc-exp-sec').style.display = 'none';
@@ -1761,6 +1821,16 @@ function buildResumeDoc() {
   document.getElementById('doc-projects-sec').style.display = 'none';
   document.getElementById('doc-lang-sec').style.display = 'none';
 
+
+
+  document.getElementById('doc-summary-sec').style.display = 'none';
+  document.getElementById('doc-exp-sec').style.display = 'none';
+  document.getElementById('doc-skills-sec').style.display = 'none';
+  document.getElementById('doc-edu-sec').style.display = 'none';
+  document.getElementById('doc-projects-sec').style.display = 'none';
+  document.getElementById('doc-lang-sec').style.display = 'none';
+
+ main
   document.getElementById('doc-name').textContent = p.name || t('doc-your-name', 'Seu Nome');
   document.getElementById('doc-role').innerHTML = highlightKeyword(p.role || '', roleKeyword);
 
@@ -2004,7 +2074,10 @@ function animateNum(id, target) {
 
 function renderATSTips(total, kw, struct, clarity, exp, matchedKeywords = [], missingKeywords = [], keywordUsage = 0, keywordDensity = 0, mainKeyword = '') {
   const tips = [];
+codex/work-on-this-project-z11neb
   const profile = resumeData.profileCategory || detectProfileCategory();
+
+ main
   if (kw < 60) tips.push(t('tip-kw-low', '⚠️ Adicione mais palavras-chave da vaga no resumo e nas habilidades.'));
   if (struct < 80) tips.push(t('tip-struct-low', '⚠️ Preencha todos os dados de contato (nome, e-mail, telefone, cidade).'));
   if (clarity < 60) tips.push(t('tip-clarity-low', '⚠️ Escreva um resumo profissional mais detalhado (mín. 80 caracteres).'));
@@ -2020,10 +2093,11 @@ function renderATSTips(total, kw, struct, clarity, exp, matchedKeywords = [], mi
   }
   if (missingKeywords.length >= 4) tips.push(t('tip-missing-many', '🎯 Cole a descrição da vaga e adicione competências técnicas específicas para aumentar aderência.'));
   if (total >= 75) tips.unshift(t('tip-good', '✅ Seu currículo está bem otimizado para ATS!'));
+ codex/work-on-this-project-z11neb
   if (profile === 'tecnologia') tips.push(t('tip-profile-tech', '💡 Perfil tecnologia: destaque stack técnica, GitHub e projetos com impacto.'));
   if (profile === 'liderança') tips.push(t('tip-profile-lead', '💡 Perfil liderança: enfatize gestão de times, resultados e decisões estratégicas.'));
   if (profile === 'administrativo') tips.push(t('tip-profile-admin', '💡 Perfil administrativo: enfatize organização, processos e indicadores.'));
-  if (profile === 'operacional') tips.push(t('tip-profile-oper', '💡 Perfil operacional: priorize execução, produtividade e segurança.'));
+  if (profile === 'operacional') tips.push(t('tip-profile-oper', '💡 Perfil operacional: priorize execução, produtividade e segurança.')); main
 
   document.getElementById('ats-tips').innerHTML = tips.map(t => `<div class="ats-tip">${t}</div>`).join('');
   document.getElementById('ats-keywords-ok').innerHTML = matchedKeywords.length
@@ -2172,7 +2246,8 @@ function loadResume(id) {
   if (!r) return;
   resumeData = {
     candidateType: r.candidateType || null,
-    profileCategory: r.profileCategory || 'administrativo',
+  codex/work-on-this-project-z11neb
+    profileCategory: r.profileCategory || 'administrativo',main
     personalInfo: r.personalInfo || {},
     summary: r.summary || '',
     jobDescription: r.jobDescription || '',
