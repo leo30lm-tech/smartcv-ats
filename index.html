@@ -1337,9 +1337,16 @@ function deleteResume(id) {
 // ============================================================
 // INIT
 // ============================================================
-// detect browser language
-if (navigator.language.startsWith('en')) lang = 'en';
-applyLang();
-</script>
-</body>
-</html>
+
+// idioma salvo ou padrão
+let lang = localStorage.getItem("lang") || "pt";
+
+// detecta idioma do navegador só na primeira vez
+if (!localStorage.getItem("lang")) {
+  if (navigator.language && navigator.language.startsWith("en")) {
+    lang = "en";
+  }
+}
+
+// aplica idioma corretamente
+applyLang(lang);
