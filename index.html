@@ -398,7 +398,7 @@
 <div id="page-home" class="page active">
   <div class="home-hero">
     <div class="hero-badge" data-i18n="hero-badge">🎯 Otimizado para ATS</div>
-    <h1 class="hero-title" data-i18n="hero-title">Construa um currículo profissional que passa nos filtros ATS</em></h1>
+    <h1 class="hero-title" data-i18n="hero-title">Construa um currículo profissional que passa nos filtros ATS</h1>
     <p class="hero-sub" data-i18n="hero-sub">Monte um currículo estratégico, otimizado para recrutadores e sistemas ATS em minutos.</p>
     <div class="hero-btns">
       <button class="btn-primary" onclick="startBuilder()" data-i18n="hero-btn-main">✏️ Criar currículo profissional</button>
@@ -616,7 +616,7 @@
         <p style="font-size:13px;color:var(--ink2);margin-top:2px;" data-i18n="prev-sub">Assim que o recrutador irá ver o seu currículo</p>
       </div>
       <div class="preview-actions">
-        <button class="btn-secondary btn-sm" onclick="showPage('builder'); currentStep=4; renderStep();" data-i18n="btn-edit">✏️ Editar</button>
+        <button class="btn-secondary btn-sm" onclick="editFromPreview()" data-i18n="btn-edit">✏️ Editar</button>
         <button class="btn-pdf" onclick="saveResume()" data-i18n="btn-save">💾 Salvar</button>
         <button class="btn-primary" onclick="downloadPDF()" data-i18n="btn-pdf">⬇️ Baixar PDF</button>
       </div>
@@ -750,10 +750,10 @@ const translations = {
     'lbl-start':'Início','lbl-end':'Fim (deixe vazio se atual)','lbl-desc':'Descrição / Conquistas',
     'btn-add-exp':'Adicionar','exp-add':'+ Adicionar entrada',
     'hero-badge':'🎯 Otimizado para ATS',
-'hero-title':'Construa um currículo profissional que passa nos filtros ATS',
-'hero-sub':'Monte um currículo estratégico, otimizado para recrutadores e sistemas ATS em minutos.',
-'hero-btn-main':'✏️ Criar currículo profissional',
-'hero-btn-dash':'📂 Meus currículos',
+    'hero-title':'Construa um currículo profissional que passa nos filtros ATS',
+    'hero-sub':'Monte um currículo estratégico, otimizado para recrutadores e sistemas ATS em minutos.',
+    'hero-btn-main':'✏️ Criar currículo profissional',
+    'hero-btn-dash':'📂 Meus currículos',
   },
   en: {
     's0-label':'Step 1 of 6','s0-title':'What is your situation?','s0-sub':'This helps personalize the resume for your professional moment.',
@@ -783,12 +783,12 @@ const translations = {
     'feat3-t':'Perfect for 1st job','feat3-d':'Never worked? We highlight education and skills.',
     'feat4-t':'Dark & Light mode','feat4-d':'Adaptable interface for any time of day.',
     'lbl-start':'Start','lbl-end':'End (leave empty if current)','lbl-desc':'Description / Achievements',
-    'btn-add-exp':'Add','exp-add':'+ Add entry'
+    'btn-add-exp':'Add','exp-add':'+ Add entry',
     'hero-badge':'🎯 ATS Optimized',
-'hero-title':'Build a professional resume that passes ATS filters',
-'hero-sub':'Create a strategic resume optimized for recruiters and ATS systems in minutes.',
-'hero-btn-main':'✏️ Create professional resume',
-'hero-btn-dash':'📂 My resumes',
+    'hero-title':'Build a professional resume that passes ATS filters',
+    'hero-sub':'Create a strategic resume optimized for recruiters and ATS systems in minutes.',
+    'hero-btn-main':'✏️ Create professional resume',
+    'hero-btn-dash':'📂 My resumes',
   }
 };
 
@@ -824,7 +824,12 @@ if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
 function showPage(id) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('page-' + id).classList.add('active');
-  document.getElementById('btn-dashboard').style.display = (id !== 'dashboard') ? 'block' : 'none';
+  
+  const dashboardBtn = document.getElementById('btn-dashboard');
+  if (dashboardBtn) {
+      dashboardBtn.style.display = (id !== 'dashboard') ? 'block' : 'none';
+  }
+  
   if (id === 'dashboard') renderDashboard();
 }
 
@@ -998,16 +1003,22 @@ function addEntry() {
     end: document.getElementById('ef-end').value,
     desc: document.getElementById('ef-desc').value.trim(),
   };
+  
+  // Validação melhorada: pelo menos um dos dois campos principais deve estar preenchido
   if (!entry.company && !entry.role) {
-    alert(lang === 'pt' ? 'Preencha ao menos empresa/instituição.' : 'Fill at least company/institution.');
+    alert(lang === 'pt' ? 'Preencha ao menos o nome da empresa/instituição ou o cargo/curso.' : 'Please fill in at least the company/institution or the role/course.');
     return;
   }
+  
   resumeData.entries.push(entry);
+  
+  // Limpar formulário
   document.getElementById('ef-company').value = '';
   document.getElementById('ef-role').value = '';
   document.getElementById('ef-start').value = '';
   document.getElementById('ef-end').value = '';
   document.getElementById('ef-desc').value = '';
+  
   renderEntryList();
 }
 
@@ -1066,6 +1077,13 @@ function showPreview() {
   computeATS();
   showPage('preview');
   window.scrollTo(0,0);
+}
+
+function editFromPreview() {
+    // Volta para o builder na etapa de experiência (passo 3)
+    currentStep = 3; 
+    showPage('builder');
+    renderStep();
 }
 
 function buildResumeDoc() {
