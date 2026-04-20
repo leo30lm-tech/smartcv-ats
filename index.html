@@ -386,7 +386,7 @@
 
 <!-- NAV -->
 <nav>
-  <div class="nav-logo">Curriculo<span>Inteligente</span> ATS</div>
+  <div class="nav-logo" data-i18n-html="nav-logo">Curriculo<span>Inteligente</span> ATS</div>
   <div class="nav-controls">
     <button class="btn-icon" id="btn-dashboard" onclick="showPage('dashboard')" style="display:none">📂 Meus Currículos</button>
     <button class="btn-icon" id="btn-lang" onclick="toggleLang()">🌐 EN</button>
@@ -721,6 +721,7 @@ let theme = 'light';
 // ============================================================
 const translations = {
   pt: {
+    'nav-logo': 'Curriculo<span>Inteligente</span> ATS',
     's0-label':'Etapa 1 de 6','s0-title':'Qual é a sua situação?','s0-sub':'Isso ajuda a personalizar o currículo para o seu momento profissional.',
     'type-1':'Primeiro emprego','type-1d':'Nunca tive experiência formal de trabalho',
     'type-2':'Jovem Aprendiz / Estágio','type-2d':'Tenho ou busco oportunidade de aprendiz ou estágio',
@@ -756,6 +757,7 @@ const translations = {
     'hero-btn-dash':'📂 Meus currículos',
   },
   en: {
+    'nav-logo': 'Smart<span>Resume</span> ATS',
     's0-label':'Step 1 of 6','s0-title':'What is your situation?','s0-sub':'This helps personalize the resume for your professional moment.',
     'type-1':'First job','type-1d':'I have never had formal work experience',
     'type-2':'Apprentice / Intern','type-2d':'Looking for apprentice or internship opportunity',
@@ -793,13 +795,26 @@ const translations = {
 };
 
 function applyLang() {
+  // Traduz textos simples (textContent)
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.getAttribute('data-i18n');
-    if (translations[lang][key]) el.textContent = translations[lang][key];
+    if (translations[lang] && translations[lang][key]) {
+      el.textContent = translations[lang][key];
+    }
   });
+  
+  // Traduz conteúdos com HTML (innerHTML)
+  document.querySelectorAll('[data-i18n-html]').forEach(el => {
+    const key = el.getAttribute('data-i18n-html');
+    if (translations[lang] && translations[lang][key]) {
+      el.innerHTML = translations[lang][key];
+    }
+  });
+
   document.getElementById('btn-lang').textContent = lang === 'pt' ? '🌐 EN' : '🌐 PT';
-  renderStep();
+  renderStep(); // Re-renderiza o passo atual para atualizar textos dinâmicos
 }
+
 function toggleLang() { lang = lang === 'pt' ? 'en' : 'pt'; applyLang(); }
 
 // ============================================================
